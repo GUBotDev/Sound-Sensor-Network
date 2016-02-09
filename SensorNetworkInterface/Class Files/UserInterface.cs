@@ -13,7 +13,7 @@ namespace SensorNetworkInterface.Class_Files
 {
     static class UserInterface
     {
-        static List<GMarkerGoogle> markers = new List<GMarkerGoogle>();
+        static List<GMapOverlay> markerOverlays = new List<GMapOverlay>();
         static GMapOverlay markersOverlay = new GMapOverlay("markers");
         static int markersPlaced = 0;
         
@@ -21,22 +21,35 @@ namespace SensorNetworkInterface.Class_Files
         {
             GMarkerGoogle marker = new GMarkerGoogle(new PointLatLng(x, y), GMarkerGoogleType.red_dot);
 
-            markers.Add(marker);
             markersPlaced++;
+            
+            marker.ToolTipMode = MarkerTooltipMode.Always;
+            marker.ToolTip = new GMapToolTip(marker);
+            marker.ToolTipText = name;
+
+            markersOverlay.Markers.Add(marker);
 
             Program.form1.addMarker(marker, markersOverlay, name);
 
-            if (markersPlaced > 10)
+            markerOverlays.Add(markersOverlay);
+
+            if (markersPlaced > 3)
             {
-                markersOverlay.Markers.Remove(markers.First());
-                removeMarker(markers.First());
+                removeMarkerOverlay(markersOverlay);
+
+                Console.WriteLine("Should remove marker");
+                markersPlaced--;
             }
         }
 
-        public static void removeMarker(GMarkerGoogle marker)
+        public static void removeMarkerOverlay(GMapOverlay markerOverlay)
         {
-            Program.form1.removeMarker(marker);
+            Program.form1.removeMarkerOverlay(markerOverlay);
         }
         
+        public static void addNode(int nodeNum, double x, double y)
+        {
+            Program.form1.addNode(nodeNum, x, y);
+        }
     }
 }

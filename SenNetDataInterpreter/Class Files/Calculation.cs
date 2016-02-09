@@ -140,7 +140,7 @@ namespace SenNetDataInterpreter.Class_Files
                     }
 
                     Console.WriteLine(position[0] + "," + position[1]);
-                    PipeReadThread.data = position[0] + "," + position[1];
+                    PipeReadThread.data.Add(position[0] + "," + position[1]);
 
                 }
                 else

@@ -88,13 +88,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Connection.cs" />
-    <Compile Include="ConsoleRead.cs" />
-    <Compile Include="Database.cs" />
-    <Compile Include="DataHandler.cs" />
-    <Compile Include="DecisionHandler.cs" />
-    <Compile Include="parseSensor.cs" />
-    <Compile Include="PipeHandler.cs" />
+    <Compile Include="Class Files\Connection.cs" />
+    <Compile Include="Class Files\ConsoleRead.cs" />
+    <Compile Include="Class Files\Database.cs" />
+    <Compile Include="Class Files\DataHandler.cs" />
+    <Compile Include="Class Files\DecisionHandler.cs" />
+    <Compile Include="Class Files\parseSensor.cs" />
+    <Compile Include="Class Files\PipeHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

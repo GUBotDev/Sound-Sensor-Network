@@ -20,7 +20,7 @@ namespace SenNetDataInterpreter.Class_Files
         static TcpListener tcpWTest;
         static Stopwatch watch = new Stopwatch();
         static int freq = 0;
-        public static string data = "";
+        public static List<string> data = new List<string>();
         
         public static void read()
         {
@@ -130,24 +130,43 @@ namespace SenNetDataInterpreter.Class_Files
                             float lat = 42.12700F;
                             float lon = -80.08700F;
 
+                            data.Add("Node,1,42.127,-80.087");
+                            data.Add("42.12743,-80.0879");
+
                             while (true)
                             {
                                 Thread.Sleep(250);
                                 //streamWriter.WriteLine(lat + "," + lon);
-                                streamWriter.WriteLine(data);
+                                //streamWriter.WriteLine(data);
+
+                                if (data.Any())
+                                {
+                                    data.Add(lat + "," + lon);
+
+                                    data.Remove(data.First());
+                                    Console.WriteLine(data.First());
+
+                                    streamWriter.WriteLine(data.First());
+                                }
+                                else
+                                {
+                                    streamWriter.WriteLine("Empty");
+                                }
+
                                 streamWriter.Flush();
+
                                 //Console.WriteLine(line);
 
                                 lat += 0.00005F;
                                 lon -= 0.00005F;
-                                
+
                                 //Console.WriteLine(line);
 
                             }
                         }
-                        catch
+                        catch (Exception ex)
                         {
-
+                            Console.WriteLine(ex.Message);
                         }
                         client.Close();
                     });

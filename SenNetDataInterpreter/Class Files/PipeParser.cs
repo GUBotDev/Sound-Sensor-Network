@@ -39,6 +39,10 @@ namespace SenNetDataInterpreter.Class_Files
         static Int32[] senFive = new Int32[3];
         static Int32[] senSix = new Int32[3];
 
+        public static bool node1 = false;
+        public static bool node2 = false;
+        public static bool node3 = false;
+
         //split string first via ':', then split via space
         public static void parsePipeString(string _readLine)
         {
@@ -99,6 +103,12 @@ namespace SenNetDataInterpreter.Class_Files
 
                     sen1 = true;
                     senI1++;
+
+                    if (node1 == false)
+                    {
+                        PipeReadThread.data.Add("Node," + nodeT  + "," +  xT + "," + yT);
+                        node1 = true;
+                    }
                 }
                 else if (nodeT == 1)
                 {
@@ -115,6 +125,12 @@ namespace SenNetDataInterpreter.Class_Files
 
                     sen2 = true;
                     senI2++;
+
+                    if (node2 == false)
+                    {
+                        PipeReadThread.data.Add("Node," + nodeT + "," + xT + "," + yT);
+                        node2 = true;
+                    }
                 }
                 else if (nodeT == 2)
                 {
@@ -131,6 +147,12 @@ namespace SenNetDataInterpreter.Class_Files
 
                     sen3 = true;
                     senI3++;
+
+                    if (node3 == false)
+                    {
+                        PipeReadThread.data.Add("Node," + nodeT + "," + xT + "," + yT);
+                        node3 = true;
+                    }
                 }
                 else
                 {
@@ -152,7 +174,7 @@ namespace SenNetDataInterpreter.Class_Files
                 }
                 else
                 {
-                    PipeReadThread.data = "Data not intact.";
+                    PipeReadThread.data.Add("Data not intact.");
                 }
                 //read backwards, take only one value,kill rest
                 /*

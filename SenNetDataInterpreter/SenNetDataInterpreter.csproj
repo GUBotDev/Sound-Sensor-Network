@@ -43,10 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Calculation.cs" />
-    <Compile Include="DataContainer.cs" />
-    <Compile Include="PipeParser.cs" />
-    <Compile Include="PipeReadThread.cs" />
+    <Compile Include="Class Files\Calculation.cs" />
+    <Compile Include="Class Files\DataContainer.cs" />
+    <Compile Include="Class Files\PipeParser.cs" />
+    <Compile Include="Class Files\PipeReadThread.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

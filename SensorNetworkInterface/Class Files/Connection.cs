@@ -15,6 +15,7 @@ namespace SensorNetworkInterface.Class_Files
         static TcpClient tcpCTest;
         static NetworkStream netStream;
         static StreamReader streReader;
+        static bool hasBeenRead = false;
 
         public static void connThread()
         {
@@ -37,14 +38,39 @@ namespace SensorNetworkInterface.Class_Files
                         string line = (string)streReader.ReadLine();
                         string[] lineSplit = line.Split(',');
 
+                        Console.WriteLine(line);
+
                         if (lineSplit.Length == 2)
                         {
-                            Console.WriteLine(line);
+                            if (hasBeenRead)
+                            {
+                                Console.WriteLine();
+                            }
+
+                            //Console.WriteLine(line);
 
                             double x = Convert.ToDouble(lineSplit[0]);
                             double y = Convert.ToDouble(lineSplit[1]);
 
                             UserInterface.createMarker(x, y, "Test");
+
+                            hasBeenRead = false;
+                        }
+                        else if (lineSplit[0] == "Node")
+                        {
+                            int nodeNum = Convert.ToInt32(lineSplit[1]);
+                            double x = Convert.ToDouble(lineSplit[2]);
+                            double y = Convert.ToDouble(lineSplit[3]);
+
+                            Console.WriteLine(line);
+
+                            UserInterface.addNode(nodeNum, x, y);
+                        }
+                        else
+                        {
+                            Console.Write("\r" + line);
+
+                            hasBeenRead = true;
                         }
 
                     }
