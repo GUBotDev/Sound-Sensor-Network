@@ -76,254 +76,6 @@
             regenerates shape of route
             </summary>
         </member>
-        <member name="T:GMap.NET.WindowsPresentation.PerfTimer">
-            <summary>
-            This class implements a high precision timer using the Win32 QueryPerformanceCounter API.
-            Typical usage:
-            <code>
-                PerfTimer t = new PerfTimer();
-                t.Start();
-                ...
-                t.Stop();
-                long ms = t.GetDuration();
-            </code>
-            You can also use it to add up a bunch of times in a loop and report average, mininum
-            and maximum times.
-            </summary>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.PerfTimer.#ctor">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.PerfTimer.Start">
-            <summary>
-            Set current time as the start time.
-            </summary>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.PerfTimer.Stop">
-            <summary>
-            Set the current time as the end time.
-            </summary>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.PerfTimer.GetDuration">
-            <summary>
-            Get the time in milliseconds between Start() and Stop().
-            </summary>
-            <returns>Milliseconds</returns>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.PerfTimer.GetMilliseconds(System.Int64)">
-            <summary>
-            Convert the given argument from "ticks" to milliseconds.
-            </summary>
-            <param name="ticks">Number of ticks returned from GetTicks()</param>
-            <returns>Milliseconds</returns>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.PerfTimer.GetDurationInTicks">
-            <summary>
-            Get the time between Start() and Stop() in the highest fidelity possible
-            as defined by Windows QueryPerformanceFrequency.  Usually this is nanoseconds.
-            </summary>
-            <returns>High fidelity tick count</returns>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.PerfTimer.GetCurrentTime">
-            <summary>
-            Get current time in ighest fidelity possible as defined by Windows QueryPerformanceCounter.  
-            Usually this is nanoseconds.
-            </summary>
-            <returns>High fidelity tick count</returns>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.PerfTimer.Count(System.Int64)">
-            <summary>
-            Add the given time to a running total so we can compute minimum, maximum and average.
-            </summary>
-            <param name="time">The time to record</param>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.PerfTimer.Minimum">
-            <summary>
-            Return the minimum time recorded by the Count() method since the last Clear
-            </summary>
-            <returns>The minimum value</returns>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.PerfTimer.Max">
-            <summary>
-            Return the maximum time recorded by the Count() method since the last Clear
-            </summary>
-            <returns>The maximum value</returns>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.PerfTimer.Median">
-            <summary>
-            Return the median of the values recorded by the Count() method since the last Clear
-            </summary>
-            <returns>The median value</returns>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.PerfTimer.PercentError">
-            <summary>
-            Return the variance in the numbers recorded by the Count() method since the last Clear
-            </summary>
-            <returns>Percentage between 0 and 100</returns>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.PerfTimer.Average">
-            <summary>
-            Return the avergae of the values recorded by the Count() method since the last Clear
-            </summary>
-            <returns>The average value</returns>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.PerfTimer.Clear">
-            <summary>
-            Reset the timer to its initial state.
-            </summary>
-        </member>
-        <member name="T:GMap.NET.WindowsPresentation.QuadTree`1">
-            <summary>
-            This class efficiently stores and retrieves arbitrarily sized and positioned
-            objects in a quad-tree data structure.  This can be used to do efficient hit
-            detection or visiblility checks on objects in a virtualized canvas.
-            The object does not need to implement any special interface because the Rect Bounds
-            of those objects is handled as a separate argument to Insert.
-            </summary>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Insert(`0,System.Windows.Rect)">
-            <summary>
-            Insert a node with given bounds into this QuadTree.
-            </summary>
-            <param name="node">The node to insert</param>
-            <param name="bounds">The bounds of this node</param>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.GetNodesInside(System.Windows.Rect)">
-            <summary>
-            Get a list of the nodes that intersect the given bounds.
-            </summary>
-            <param name="bounds">The bounds to test</param>
-            <returns>List of zero or mode nodes found inside the given bounds</returns>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.HasNodesInside(System.Windows.Rect)">
-            <summary>
-            Get a list of the nodes that intersect the given bounds.
-            </summary>
-            <param name="bounds">The bounds to test</param>
-            <returns>List of zero or mode nodes found inside the given bounds</returns>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.GetNodes(System.Windows.Rect)">
-            <summary>
-            Get list of nodes that intersect the given bounds.
-            </summary>
-            <param name="bounds">The bounds to test</param>
-            <returns>The list of nodes intersecting the given bounds</returns>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Remove(`0)">
-            <summary>
-            Remove the given node from this QuadTree.
-            </summary>
-            <param name="node">The node to remove</param>
-            <returns>True if the node was found and removed.</returns>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.ReIndex">
-            <summary>
-            Rebuild all the Quadrants according to the current QuadTree Bounds.
-            </summary>
-        </member>
-        <member name="P:GMap.NET.WindowsPresentation.QuadTree`1.Bounds">
-            <summary>
-            This determines the overall quad-tree indexing strategy, changing this bounds
-            is expensive since it has to re-divide the entire thing - like a re-hash operation.
-            </summary>
-        </member>
-        <!-- Badly formed XML comment ignored for member "T:GMap.NET.WindowsPresentation.QuadTree`1.QuadNode" -->
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.QuadNode.#ctor(`0,System.Windows.Rect)">
-            <summary>
-            Construct new QuadNode to wrap the given node with given bounds
-            </summary>
-            <param name="node">The node</param>
-            <param name="bounds">The bounds of that node</param>
-        </member>
-        <member name="P:GMap.NET.WindowsPresentation.QuadTree`1.QuadNode.Node">
-            <summary>
-            The node
-            </summary>
-        </member>
-        <member name="P:GMap.NET.WindowsPresentation.QuadTree`1.QuadNode.Bounds">
-            <summary>
-            The Rect bounds of the node
-            </summary>
-        </member>
-        <member name="P:GMap.NET.WindowsPresentation.QuadTree`1.QuadNode.Next">
-            <summary>
-            QuadNodes form a linked list in the Quadrant.
-            </summary>
-        </member>
-        <member name="T:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant">
-            <summary>
-            The canvas is split up into four Quadrants and objects are stored in the quadrant that contains them
-            and each quadrant is split up into four child Quadrants recurrsively.  Objects that overlap more than
-            one quadrant are stored in the _nodes list for this Quadrant.
-            </summary>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.#ctor(GMap.NET.WindowsPresentation.QuadTree{`0}.Quadrant,System.Windows.Rect)">
-            <summary>
-            Construct new Quadrant with a given bounds all nodes stored inside this quadrant
-            will fit inside this bounds.  
-            </summary>
-            <param name="parent">The parent quadrant (if any)</param>
-            <param name="bounds">The bounds of this quadrant</param>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.Insert(`0,System.Windows.Rect)">
-            <summary>
-            Insert the given node
-            </summary>
-            <param name="node">The node </param>
-            <param name="bounds">The bounds of that node</param>
-            <returns></returns>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.GetIntersectingNodes(System.Collections.Generic.List{GMap.NET.WindowsPresentation.QuadTree{`0}.QuadNode},System.Windows.Rect)">
-            <summary>
-            Returns all nodes in this quadrant that intersect the given bounds.
-            The nodes are returned in pretty much random order as far as the caller is concerned.
-            </summary>
-            <param name="nodes">List of nodes found in the given bounds</param>
-            <param name="bounds">The bounds that contains the nodes you want returned</param>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.GetIntersectingNodes(GMap.NET.WindowsPresentation.QuadTree{`0}.QuadNode,System.Collections.Generic.List{GMap.NET.WindowsPresentation.QuadTree{`0}.QuadNode},System.Windows.Rect)">
-            <summary>
-            Walk the given linked list of QuadNodes and check them against the given bounds.
-            Add all nodes that intersect the bounds in to the list.
-            </summary>
-            <param name="last">The last QuadNode in a circularly linked list</param>
-            <param name="nodes">The resulting nodes are added to this list</param>
-            <param name="bounds">The bounds to test against each node</param>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.HasIntersectingNodes(System.Windows.Rect)">
-            <summary>
-            Return true if there are any nodes in this Quadrant that intersect the given bounds.
-            </summary>
-            <param name="bounds">The bounds to test</param>
-            <returns>boolean</returns>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.HasIntersectingNodes(GMap.NET.WindowsPresentation.QuadTree{`0}.QuadNode,System.Windows.Rect)">
-            <summary>
-            Walk the given linked list and test each node against the given bounds/
-            </summary>
-            <param name="last">The last node in the circularly linked list.</param>
-            <param name="bounds">Bounds to test</param>
-            <returns>Return true if a node in the list intersects the bounds</returns>
-        </member>
-        <member name="M:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.RemoveNode(`0)">
-            <summary>
-            Remove the given node from this Quadrant.
-            </summary>
-            <param name="node">The node to remove</param>
-            <returns>Returns true if the node was found and removed.</returns>
-        </member>
-        <member name="P:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.Parent">
-            <summary>
-            The parent Quadrant or null if this is the root
-            </summary>
-        </member>
-        <member name="P:GMap.NET.WindowsPresentation.QuadTree`1.Quadrant.Bounds">
-            <summary>
-            The bounds of this quadrant
-            </summary>
-        </member>
         <member name="T:GMap.NET.WindowsPresentation.GMapImage">
             <summary>
             image abstraction
@@ -439,7 +191,21 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:GMap.NET.WindowsPresentation.GMapControl.CreateRoutePath(System.Collections.Generic.List{System.Windows.Point})">
+            <summary>
+            creates path from list of points, for performance set addBlurEffect to false
+            </summary>
+            <param name="pl"></param>
+            <returns></returns>
+        </member>
         <member name="M:GMap.NET.WindowsPresentation.GMapControl.CreateRoutePath(System.Collections.Generic.List{System.Windows.Point},System.Boolean)">
+            <summary>
+            creates path from list of points, for performance set addBlurEffect to false
+            </summary>
+            <param name="pl"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GMap.NET.WindowsPresentation.GMapControl.CreatePolygonPath(System.Collections.Generic.List{System.Windows.Point})">
             <summary>
             creates path from list of points, for performance set addBlurEffect to false
             </summary>
@@ -560,6 +326,11 @@
         <member name="P:GMap.NET.WindowsPresentation.GMapControl.MouseWheelZoomType">
             <summary>
             map zooming type for mouse wheel
+            </summary>
+        </member>
+        <member name="P:GMap.NET.WindowsPresentation.GMapControl.MouseWheelZoomEnabled">
+            <summary>
+            enable map zoom on mouse wheel
             </summary>
         </member>
         <member name="P:GMap.NET.WindowsPresentation.GMapControl.ShowTileGridLines">

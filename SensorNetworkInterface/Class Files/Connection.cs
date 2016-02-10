@@ -32,13 +32,12 @@ namespace SensorNetworkInterface.Class_Files
                     streReader = new StreamReader(netStream);
 
                     Console.WriteLine("Connected to Interpreter.");
-
+                    
                     while (true)
                     {
                         string line = (string)streReader.ReadLine();
-                        string[] lineSplit = line.Split(',');
 
-                        Console.WriteLine(line);
+                        string[] lineSplit = line.Split(',');
 
                         if (lineSplit.Length == 2)
                         {
@@ -47,7 +46,7 @@ namespace SensorNetworkInterface.Class_Files
                                 Console.WriteLine();
                             }
 
-                            //Console.WriteLine(line);
+                            Console.WriteLine(line);
 
                             double x = Convert.ToDouble(lineSplit[0]);
                             double y = Convert.ToDouble(lineSplit[1]);
@@ -56,7 +55,7 @@ namespace SensorNetworkInterface.Class_Files
 
                             hasBeenRead = false;
                         }
-                        else if (lineSplit[0] == "Node")
+                        else if (lineSplit[0].Contains("Node"))
                         {
                             int nodeNum = Convert.ToInt32(lineSplit[1]);
                             double x = Convert.ToDouble(lineSplit[2]);
@@ -77,7 +76,7 @@ namespace SensorNetworkInterface.Class_Files
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine("ConnThread: " + ex.Message);
                     Thread.Sleep(2500);
                 }
             }

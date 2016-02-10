@@ -127,11 +127,10 @@ namespace SenNetDataInterpreter.Class_Files
 
                         try
                         {
-                            float lat = 42.12700F;
-                            float lon = -80.08700F;
-
-                            data.Add("Node,1,42.127,-80.087");
-                            data.Add("42.12743,-80.0879");
+                            //data.Add("");
+                            //data.Add("Node,1,42.127,-80.087");
+                            //data.Add("Node,2,42.1275,-80.0875");
+                            //data.Add("42.12743,-80.0879");
 
                             while (true)
                             {
@@ -141,24 +140,20 @@ namespace SenNetDataInterpreter.Class_Files
 
                                 if (data.Any())
                                 {
-                                    data.Add(lat + "," + lon);
+                                    //data.Add(lat + "," + lon);
 
                                     data.Remove(data.First());
                                     Console.WriteLine(data.First());
 
                                     streamWriter.WriteLine(data.First());
-                                }
-                                else
-                                {
-                                    streamWriter.WriteLine("Empty");
-                                }
 
-                                streamWriter.Flush();
+                                    streamWriter.Flush();
+                                }
 
                                 //Console.WriteLine(line);
 
-                                lat += 0.00005F;
-                                lon -= 0.00005F;
+                                //lat += 0.00005F;
+                                //lon -= 0.00005F;
 
                                 //Console.WriteLine(line);
 

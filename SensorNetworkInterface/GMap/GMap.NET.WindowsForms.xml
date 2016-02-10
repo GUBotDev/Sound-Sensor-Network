@@ -692,6 +692,11 @@
             map zooming type for mouse wheel
             </summary>
         </member>
+        <member name="P:GMap.NET.WindowsForms.GMapControl.MouseWheelZoomEnabled">
+            <summary>
+            enable map zoom on mouse wheel
+            </summary>
+        </member>
         <member name="P:GMap.NET.WindowsForms.GMapControl.SelectedAreaFillColor">
             <summary>
             background of selected area

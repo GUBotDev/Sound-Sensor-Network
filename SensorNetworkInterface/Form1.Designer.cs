@@ -29,17 +29,20 @@
         private void InitializeComponent()
         {
             this.gMap = new GMap.NET.WindowsForms.GMapControl();
+            this.listenerThread = new System.ComponentModel.BackgroundWorker();
             this.SuspendLayout();
             // 
             // gMap
             // 
+            this.gMap.AutoSize = true;
             this.gMap.Bearing = 0F;
             this.gMap.CanDragMap = true;
+            this.gMap.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gMap.EmptyTileColor = System.Drawing.Color.Navy;
             this.gMap.GrayScaleMode = false;
             this.gMap.HelperLineOption = GMap.NET.WindowsForms.HelperLineOptions.DontShow;
             this.gMap.LevelsKeepInMemmory = 5;
-            this.gMap.Location = new System.Drawing.Point(-1, 0);
+            this.gMap.Location = new System.Drawing.Point(0, 0);
             this.gMap.MarkersEnabled = true;
             this.gMap.MaxZoom = 2;
             this.gMap.MinZoom = 2;
@@ -52,9 +55,14 @@
             this.gMap.ScaleMode = GMap.NET.WindowsForms.ScaleModes.Integer;
             this.gMap.SelectedAreaFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(65)))), ((int)(((byte)(105)))), ((int)(((byte)(225)))));
             this.gMap.ShowTileGridLines = false;
-            this.gMap.Size = new System.Drawing.Size(823, 754);
+            this.gMap.Size = new System.Drawing.Size(822, 723);
             this.gMap.TabIndex = 0;
             this.gMap.Zoom = 0D;
+            // 
+            // listenerThread
+            // 
+            this.listenerThread.WorkerReportsProgress = true;
+            this.listenerThread.DoWork += new System.ComponentModel.DoWorkEventHandler(this.listenerThread_DoWork);
             // 
             // Form1
             // 
@@ -66,12 +74,14 @@
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
         public GMap.NET.WindowsForms.GMapControl gMap;
+        private System.ComponentModel.BackgroundWorker listenerThread;
     }
 }
 

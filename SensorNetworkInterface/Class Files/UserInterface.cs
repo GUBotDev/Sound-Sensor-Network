@@ -13,43 +13,65 @@ namespace SensorNetworkInterface.Class_Files
 {
     static class UserInterface
     {
-        static List<GMapOverlay> markerOverlays = new List<GMapOverlay>();
-        static GMapOverlay markersOverlay = new GMapOverlay("markers");
+        static List<GMarkerGoogle> markers = new List<GMarkerGoogle>();
+        static List<GMapOverlay> overlays = new List<GMapOverlay>();
+        static GMapOverlay markersOverlay;
         static int markersPlaced = 0;
         
         public static void createMarker(double x, double y, string name)
         {
-            GMarkerGoogle marker = new GMarkerGoogle(new PointLatLng(x, y), GMarkerGoogleType.red_dot);
-
-            markersPlaced++;
-            
-            marker.ToolTipMode = MarkerTooltipMode.Always;
-            marker.ToolTip = new GMapToolTip(marker);
-            marker.ToolTipText = name;
-
-            markersOverlay.Markers.Add(marker);
-
-            Program.form1.addMarker(marker, markersOverlay, name);
-
-            markerOverlays.Add(markersOverlay);
-
-            if (markersPlaced > 3)
+            try
             {
-                removeMarkerOverlay(markersOverlay);
+                markersOverlay = new GMapOverlay("markers");
 
-                Console.WriteLine("Should remove marker");
-                markersPlaced--;
+                GMarkerGoogle marker = new GMarkerGoogle(new PointLatLng(x, y), GMarkerGoogleType.red_dot);
+
+                marker.ToolTipMode = MarkerTooltipMode.Always;
+                marker.ToolTip = new GMapToolTip(marker);
+                marker.ToolTipText = (x + ", " + y).ToString();
+                
+                if (markersPlaced >= 3)
+                {
+                    //markers.ElementAt(1).IsVisible = true;
+                    //markers.ElementAt(2).IsVisible = false;
+                    //markers.ElementAt(1).IsVisible = false;
+                    //markers.ElementAt(0).IsVisible = false;
+                    //markers.Last().Dispose();
+                    overlays.ToList().First().Markers.Remove(markers.ToList().First());
+                    markers.Remove(markers.ToList().First());
+                    overlays.Remove(overlays.ToList().First());
+
+                    //Console.WriteLine("Should remove marker");
+                }
+                else
+                {
+                    markersPlaced++;
+                }
+
+                markersOverlay.Markers.Add(marker);
+                markers.Add(marker);
+                overlays.Add(markersOverlay);
+
+                Program.form1.gMap.Invoke(new Action(() =>
+                    {
+                        //Program.form1.addMarker(marker, markersOverlay, name);
+
+                        Program.form1.gMap.Overlays.Add(markersOverlay);
+                        Program.form1.gMap.Position = marker.Position;
+                        //gMap.Position = main;
+                    }
+                ));
+
             }
-        }
-
-        public static void removeMarkerOverlay(GMapOverlay markerOverlay)
-        {
-            Program.form1.removeMarkerOverlay(markerOverlay);
+            catch (Exception ex)
+            {
+                Console.WriteLine("Create Marker: " + ex.Message);
+            }
         }
         
         public static void addNode(int nodeNum, double x, double y)
         {
-            Program.form1.addNode(nodeNum, x, y);
+            Program.form1.addNode(nodeNum, x, y, markersOverlay);
         }
     }
 }

@@ -18,6 +18,7 @@ namespace SensorNetworkInterface.Class_Files
     {
         public GMapOverlay markersOverlay;
         PointLatLng main = new PointLatLng(42.127331, -80.087581);
+        int markersPlaced = 0;
 
         public Form1()
         {
@@ -37,39 +38,69 @@ namespace SensorNetworkInterface.Class_Files
             gMap.MaxZoom = 20;
             gMap.Zoom = 18;
             gMap.Position = main;
+
+
+            if (listenerThread.IsBusy != true)
+            {
+                // Start the asynchronous operation.
+                listenerThread.RunWorkerAsync();
+            }
         }
 
-        public void addNode(int nodeNum, double x, double y)
+        delegate void addNodeCallback(int nodeNum, double x, double y, GMapOverlay markersOverlay);
+
+
+        public void addNode(int nodeNum, double x, double y, GMapOverlay markersOverlay)
         {
-            markersOverlay = new GMapOverlay("markers");
+            /*
+            if (this.gMap.InvokeRequired)
+            {
+                addNodeCallback a = new addNodeCallback(addNode);
+                this.Invoke(a, new object[] { nodeNum, x, y, markersOverlay });
+            }
+            else
+            {
+                PointLatLng point = new PointLatLng(x, y);
 
-            PointLatLng point = new PointLatLng(x, y);
+                GMarkerGoogle markerNode = new GMarkerGoogle(point, GMarkerGoogleType.green);
 
-            GMarkerGoogle markerNode = new GMarkerGoogle(point, GMarkerGoogleType.green);
+                markersOverlay.Markers.Add(markerNode);
 
-            markersOverlay.Markers.Add(markerNode);
+                markerNode.ToolTipMode = MarkerTooltipMode.Always;
+                markerNode.ToolTip = new GMapToolTip(markerNode);
+                markerNode.ToolTipText = "Node " + nodeNum;
 
-            markerNode.ToolTipMode = MarkerTooltipMode.Always;
-            markerNode.ToolTip = new GMapToolTip(markerNode);
-            markerNode.ToolTipText = "Node " + nodeNum;
-
-            gMap.Position = point;
-            gMap.Overlays.Add(markersOverlay);
-            //gMap.Position = main;
+                gMap.Position = point;
+                gMap.Overlays.Add(markersOverlay);
+                //gMap.Position = main;
+            }
+            */
         }
+
+        //delegate void addMarkerCallback(GMarkerGoogle marker, GMapOverlay marOver, string name);
 
         public void addMarker(GMarkerGoogle marker, GMapOverlay marOver, string name)
         {
-            //MessageBox.Show("Add");
-            
-            BeginInvoke((MethodInvoker)delegate {
-
-                gMap.Position = marker.Position;
-                gMap.Overlays.Add(marOver);
-                //gMap.Position = main;
-            });
-
-            //MessageBox.Show("End");
+            try
+            {
+                if (this.gMap.InvokeRequired)
+                {
+                    //addMarkerCallback a = new addMarkerCallback(addMarker);
+                    //this.Invoke(a, new object[] { marker, marOver, name });
+                    this.BeginInvoke(new Action<GMarkerGoogle, GMapOverlay, string>(addMarker), marker, marOver, name);
+                }
+                else
+                {
+                    markersPlaced++;
+                    gMap.Position = marker.Position;
+                    gMap.Overlays.Add(marOver);
+                    //gMap.Position = main;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         public void removeMarkerOverlay(GMapOverlay marOver)
@@ -79,6 +110,10 @@ namespace SensorNetworkInterface.Class_Files
                 //gMap.Position = main;
             });
         }
-        
+
+        private void listenerThread_DoWork(object sender, DoWorkEventArgs e)
+        {
+            Connection.connThread();
+        }
     }
 }
