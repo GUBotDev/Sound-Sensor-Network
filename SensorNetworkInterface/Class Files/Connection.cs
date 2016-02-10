@@ -36,7 +36,6 @@ namespace SensorNetworkInterface.Class_Files
                     while (true)
                     {
                         string line = (string)streReader.ReadLine();
-
                         string[] lineSplit = line.Split(',');
 
                         if (lineSplit.Length == 2)
@@ -46,7 +45,7 @@ namespace SensorNetworkInterface.Class_Files
                                 Console.WriteLine();
                             }
 
-                            Console.WriteLine(line);
+                            //Console.WriteLine(line);
 
                             double x = Convert.ToDouble(lineSplit[0]);
                             double y = Convert.ToDouble(lineSplit[1]);
@@ -61,7 +60,7 @@ namespace SensorNetworkInterface.Class_Files
                             double x = Convert.ToDouble(lineSplit[2]);
                             double y = Convert.ToDouble(lineSplit[3]);
 
-                            Console.WriteLine(line);
+                            //Console.WriteLine(line);
 
                             UserInterface.addNode(nodeNum, x, y);
                         }

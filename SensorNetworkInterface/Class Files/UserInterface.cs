@@ -30,7 +30,7 @@ namespace SensorNetworkInterface.Class_Files
                 marker.ToolTip = new GMapToolTip(marker);
                 marker.ToolTipText = (x + ", " + y).ToString();
                 
-                if (markersPlaced >= 3)
+                if (markersPlaced >= 6)
                 {
                     //markers.ElementAt(1).IsVisible = true;
                     //markers.ElementAt(2).IsVisible = false;
@@ -71,7 +71,14 @@ namespace SensorNetworkInterface.Class_Files
         
         public static void addNode(int nodeNum, double x, double y)
         {
-            Program.form1.addNode(nodeNum, x, y, markersOverlay);
+            try
+            {
+                Program.form1.addNode(nodeNum, x, y, markersOverlay);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Add Node: " + ex.Message);
+            }
         }
     }
 }

@@ -46,6 +46,7 @@
             this.gMap.MarkersEnabled = true;
             this.gMap.MaxZoom = 2;
             this.gMap.MinZoom = 2;
+            this.gMap.MouseWheelZoomEnabled = true;
             this.gMap.MouseWheelZoomType = GMap.NET.MouseWheelZoomType.MousePositionAndCenter;
             this.gMap.Name = "gMap";
             this.gMap.NegativeMode = false;
@@ -55,7 +56,7 @@
             this.gMap.ScaleMode = GMap.NET.WindowsForms.ScaleModes.Integer;
             this.gMap.SelectedAreaFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(65)))), ((int)(((byte)(105)))), ((int)(((byte)(225)))));
             this.gMap.ShowTileGridLines = false;
-            this.gMap.Size = new System.Drawing.Size(822, 723);
+            this.gMap.Size = new System.Drawing.Size(822, 721);
             this.gMap.TabIndex = 0;
             this.gMap.Zoom = 0D;
             // 
@@ -68,7 +69,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(822, 723);
+            this.ClientSize = new System.Drawing.Size(822, 721);
             this.Controls.Add(this.gMap);
             this.Name = "Form1";
             this.Text = "Form1";

@@ -125,6 +125,7 @@ namespace SenNetDataInterpreter.Class_Files
 
                     }
                 }
+
                 if (isTripped)
                 {
                     data = triangulate(x[0], x[1], x[2], y[0], y[1], y[2], highSens[0], secSens[0], highSens[1], secSens[1], highSens[2], secSens[2], highSensIndex[0], secSensIndex[0], highSensIndex[1], secSensIndex[1], highSensIndex[2], secSensIndex[2], avgSensVal1, avgSensVal2, avgSensVal3);

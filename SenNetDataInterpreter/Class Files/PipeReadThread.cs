@@ -127,35 +127,37 @@ namespace SenNetDataInterpreter.Class_Files
 
                         try
                         {
-                            //data.Add("");
                             //data.Add("Node,1,42.127,-80.087");
                             //data.Add("Node,2,42.1275,-80.0875");
                             //data.Add("42.12743,-80.0879");
 
+                            /*
+                            float lat = 42;
+                            float lon = -80;
+
+                            data.Add("");
+                            */
+
                             while (true)
                             {
-                                Thread.Sleep(250);
-                                //streamWriter.WriteLine(lat + "," + lon);
-                                //streamWriter.WriteLine(data);
+                                //Thread.Sleep(250);
 
                                 if (data.Any())
                                 {
                                     //data.Add(lat + "," + lon);
 
                                     data.Remove(data.First());
-                                    Console.WriteLine(data.First());
+                                    //Console.WriteLine(data.First());
 
                                     streamWriter.WriteLine(data.First());
 
                                     streamWriter.Flush();
                                 }
-
-                                //Console.WriteLine(line);
-
-                                //lat += 0.00005F;
-                                //lon -= 0.00005F;
-
-                                //Console.WriteLine(line);
+                                
+                                /*
+                                lat += 0.0005F;
+                                lon -= 0.0005F;
+                                */
 
                             }
                         }
