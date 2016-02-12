@@ -52,7 +52,6 @@ namespace SensorNetworkInterface.Class_Files
 
         public void addNode(int nodeNum, double x, double y, GMapOverlay markersOverlay)
         {
-            /*
             if (this.gMap.InvokeRequired)
             {
                 addNodeCallback a = new addNodeCallback(addNode);
@@ -74,7 +73,6 @@ namespace SensorNetworkInterface.Class_Files
                 gMap.Overlays.Add(markersOverlay);
                 //gMap.Position = main;
             }
-            */
         }
 
         //delegate void addMarkerCallback(GMarkerGoogle marker, GMapOverlay marOver, string name);

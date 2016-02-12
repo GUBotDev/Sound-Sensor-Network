@@ -73,7 +73,32 @@ namespace SensorNetworkInterface.Class_Files
         {
             try
             {
-                Program.form1.addNode(nodeNum, x, y, markersOverlay);
+                markersOverlay = new GMapOverlay("markers");
+
+                PointLatLng point = new PointLatLng(x, y);
+
+                GMarkerGoogle markerNode = new GMarkerGoogle(point, GMarkerGoogleType.green);
+
+                markersOverlay.Markers.Add(markerNode);
+
+                markerNode.ToolTipMode = MarkerTooltipMode.Always;
+                markerNode.ToolTip = new GMapToolTip(markerNode);
+                markerNode.ToolTipText = "Node " + nodeNum;
+                
+                Program.form1.gMap.Invoke(new Action(() =>
+                {
+                    Program.form1.gMap.Overlays.Add(markersOverlay);
+                    Program.form1.gMap.Position = point;
+                    //gMap.Position = main;
+
+                    //Program.form1.addMarker(marker, markersOverlay, name);
+
+                    //Program.form1.addNode(nodeNum, x, y, markersOverlay);
+
+                    //gMap.Position = main;
+                }
+                ));
+
             }
             catch (Exception ex)
             {

@@ -143,7 +143,7 @@ namespace SenNetDataInterpreter.Class_Files
 
                     if (position[0].ToString() == "NaN" || position[0] != Double.NaN)
                     {
-                        if (position[0] > 41 && position[0] < 43)
+                        if (position[0] > 41 && position[0] < 43 && position[1] > -81 && position[1] < -79)
                         {
                             Console.WriteLine(position[0] + "," + position[1]);
                             PipeReadThread.data.Add(position[0] + "," + position[1]);

@@ -38,7 +38,17 @@ namespace SensorNetworkInterface.Class_Files
                         string line = (string)streReader.ReadLine();
                         string[] lineSplit = line.Split(',');
 
-                        if (lineSplit.Length == 2)
+                        if (lineSplit[0].Contains("Node"))
+                        {
+                            int nodeNum = Convert.ToInt32(lineSplit[1]);
+                            double x = Convert.ToDouble(lineSplit[2]);
+                            double y = Convert.ToDouble(lineSplit[3]);
+
+                            Console.WriteLine("Node: " + line);
+
+                            UserInterface.addNode(nodeNum, x, y);
+                        }
+                        else if (lineSplit.Length == 2)
                         {
                             if (hasBeenRead)
                             {
@@ -53,16 +63,6 @@ namespace SensorNetworkInterface.Class_Files
                             UserInterface.createMarker(x, y, "Test");
 
                             hasBeenRead = false;
-                        }
-                        else if (lineSplit[0].Contains("Node"))
-                        {
-                            int nodeNum = Convert.ToInt32(lineSplit[1]);
-                            double x = Convert.ToDouble(lineSplit[2]);
-                            double y = Convert.ToDouble(lineSplit[3]);
-
-                            //Console.WriteLine(line);
-
-                            UserInterface.addNode(nodeNum, x, y);
                         }
                         else
                         {

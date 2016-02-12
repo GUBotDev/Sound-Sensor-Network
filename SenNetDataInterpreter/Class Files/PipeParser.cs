@@ -112,7 +112,13 @@ namespace SenNetDataInterpreter.Class_Files
 
                         if (node1 == false)
                         {
-                            PipeReadThread.data.Add("Node," + nodeT + "," + xT + "," + yT);
+                            double[] position = new double[2];
+                            position = Calculation.convToLatLon(xT, yT);
+
+                            PipeReadThread.data.Add("Node," + nodeT + "," + position[0] + "," + position[1]);
+
+                            Console.WriteLine("Node," + nodeT + "," + position[0] + "," + position[1]);
+
                             node1 = true;
                         }
                     }
@@ -134,7 +140,13 @@ namespace SenNetDataInterpreter.Class_Files
 
                         if (node2 == false)
                         {
-                            PipeReadThread.data.Add("Node," + nodeT + "," + xT + "," + yT);
+                            double[] position = new double[2];
+                            position = Calculation.convToLatLon(xT, yT);
+
+                            PipeReadThread.data.Add("Node," + nodeT + "," + position[0] + "," + position[1]);
+
+                            Console.WriteLine("Node," + nodeT + "," + position[0] + "," + position[1]);
+
                             node2 = true;
                         }
                     }
@@ -156,7 +168,13 @@ namespace SenNetDataInterpreter.Class_Files
 
                         if (node3 == false)
                         {
-                            PipeReadThread.data.Add("Node," + nodeT + "," + xT + "," + yT);
+                            double[] position = new double[2];
+                            position = Calculation.convToLatLon(xT, yT);
+
+                            PipeReadThread.data.Add("Node," + nodeT + "," + position[0] + "," + position[1]);
+
+                            Console.WriteLine("Node," + nodeT + "," + position[0] + "," + position[1]);
+
                             node3 = true;
                         }
                     }
