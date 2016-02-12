@@ -25,10 +25,10 @@ namespace SenNetDataHandler.Class_Files
         {
             //string info = parSens.getDateTime().ToString("yyyy-MM-dd_HH:mm:ss") + " " + parsedInfo[0] * parsedInfo[1] + " " + parsedInfo[2] * parsedInfo[3] + " " + parsedValues[0] + " " + parsedValues[1] + " " + parsedValues[2] + " " + parsedValues[3] + " " + parsedValues[4] + " " + parsedValues[5];
 
-            //HandleData.analyzeData(node, parsedValues, parsedInfo, parSens.getDateTime());
+            HandleData.analyzeData(node, parsedValues, parsedInfo, parSens.getDateTime());
             
             //////////////////////////////////////////////////////////////////////////////////////////////////////
-            HandleData.storeDataInternal(ref createFile, ref nodeWriter, node, parsedValues, parsedInfo, parSens.getDateTime(), ref newFileDate, fileCapTime);
+            //HandleData.storeDataInternal(ref createFile, ref nodeWriter, node, parsedValues, parsedInfo, parSens.getDateTime(), ref newFileDate, fileCapTime);
 
             //HandleData.storeStringExternal(parsedInfo[0], info);
 

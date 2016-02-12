@@ -25,6 +25,8 @@ namespace SenNetDataHandler.Class_Files
         {
             try
             {
+                //Console.WriteLine(sendString);
+
                 streWriter.WriteLine(sendString);
                 streWriter.Flush();
 

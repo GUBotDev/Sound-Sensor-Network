@@ -49,7 +49,7 @@ namespace SenNetDataInterpreter.Class_Files
                             {
 
                                 var line = streamReader.ReadLine();
-                                //Console.WriteLine(line);
+                                //Console.WriteLine("Interpreter: " + line);
 
                                 freq++;
                                 //Console.WriteLine(line);
@@ -60,7 +60,7 @@ namespace SenNetDataInterpreter.Class_Files
                                 {
                                     watch.Stop();
 
-                                    //Console.WriteLine(freq);
+                                    //Console.WriteLine("Interpreter input: " + freq);
 
                                     freq = 0;
                                     watch.Reset();
@@ -140,16 +140,16 @@ namespace SenNetDataInterpreter.Class_Files
 
                             while (true)
                             {
-                                //Thread.Sleep(250);
+                                //Thread.Sleep(500);
 
-                                if (data.Any())
+                                if (data.ToList().Any())
                                 {
                                     //data.Add(lat + "," + lon);
 
-                                    data.Remove(data.First());
                                     //Console.WriteLine(data.First());
 
-                                    streamWriter.WriteLine(data.First());
+                                    streamWriter.WriteLine(data.ToList().First());
+                                    data.Remove(data.ToList().First());
 
                                     streamWriter.Flush();
                                 }

@@ -95,7 +95,7 @@ namespace SenNetDataInterpreter.Class_Files
                     highSensIndex[i] = Array.IndexOf(tempArr, highSens[i]);
                     secSensIndex[i] = Array.IndexOf(tempArr, secSens[i]);
 
-                    if (highSens[i] > 35)
+                    if (highSens[i] > 50)
                     {
                         isTripped = true;
                     }
@@ -136,19 +136,27 @@ namespace SenNetDataInterpreter.Class_Files
                     //just for organizing the console a bit better
                     if (wasTripped)
                     {
-                        Console.WriteLine();
+                        //Console.WriteLine();
                         wasTripped = false;
                     }
 
-                    Console.WriteLine(position[0] + "," + position[1]);
-                    PipeReadThread.data.Add(position[0] + "," + position[1]);
+
+                    if (position[0].ToString() == "NaN" || position[0] != Double.NaN)
+                    {
+                        if (position[0] > 41 && position[0] < 43)
+                        {
+                            Console.WriteLine(position[0] + "," + position[1]);
+                            PipeReadThread.data.Add(position[0] + "," + position[1]);
+                        }
+                    }
+
 
                 }
                 else
                 {
                     wasTripped = true;
 
-                    Console.Write("\rNo sensor tripped.");
+                    //Console.Write("\rNo sensor tripped.");
                 }
 
                 /*
@@ -360,7 +368,7 @@ namespace SenNetDataInterpreter.Class_Files
             }
             else
             {
-                Console.WriteLine("Recorded Level Must be Greater than Background Level");
+                //Console.WriteLine("Recorded Level Must be Greater than Background Level");
             }
 
             return sourceInt;
