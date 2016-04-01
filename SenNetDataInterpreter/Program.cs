@@ -13,13 +13,24 @@ namespace SenNetDataInterpreter.Class_Files
         static void Main(string[] args)
         {
             Console.WriteLine("Starting Threads.");
-
-            Thread readThread = new Thread(() => PipeReadThread.read());
+            
+            Thread readThread = new Thread(() => PipeThread.readNode());
             readThread.Start();
             
-            Thread writeThread = new Thread(() => PipeReadThread.write());
+            Thread writeThread = new Thread(() => PipeThread.write());
             writeThread.Start();
-            //Console.ReadLine();
+
+            Thread readAudioThread = new Thread(() => PipeThread.audioReadNode());
+            readAudioThread.Start();
+
+            Thread fileThread = new Thread(() => PipeThread.writeFile());
+            fileThread.Start();
+            
+            Thread fileCheck = new Thread(() => PipeThread.checkFile());
+            fileCheck.Start();
+
+            Thread dataCheck = new Thread(() => PipeThread.checkData());
+            dataCheck.Start();
         }
     }
 }

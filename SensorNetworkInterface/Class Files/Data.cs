@@ -8,5 +8,6 @@ namespace SensorNetworkInterface.Class_Files
 {
     class Data
     {
+
     }
 }

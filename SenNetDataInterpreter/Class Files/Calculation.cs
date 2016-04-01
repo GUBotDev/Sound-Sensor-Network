@@ -37,8 +37,10 @@ namespace SenNetDataInterpreter.Class_Files
             return degree;
         }
 
-        public static void triangulatePosition(List<DateTime> date, List<Int32> node, List<Int32> x, List<Int32> y, List<Int32> senOne, List<Int32> senTwo, List<Int32> senThree, List<Int32> senFour, List<Int32> senFive, List<Int32> senSix)
+        public static void triangulatePosition(Node[] nodes)
         {
+            //List<DateTime> date, List< Int32 > node, List<Int32> x, List< Int32 > y, List<Int32> senOne, List< Int32 > senTwo, List<Int32> senThree, List< Int32 > senFour, List<Int32> senFive, List< Int32 > senSix
+
             ////////////////////////
             /*
             TODO:
@@ -49,22 +51,21 @@ namespace SenNetDataInterpreter.Class_Files
             ////////////////////////
 
             bool isTripped = false;
-            int length = node.ToArray().Length;
+            int length = nodes.Length;
             float[] nodeDegrees = new float[length];
             float[] highSens = new float[length];
             float[] secSens = new float[length];
             float[] highSensIndex = new float[length];
             float[] secSensIndex = new float[length];
             float[] data;
-
+            /*
             if (length == 1)
             {
                 try
                 {
                     float degree = determineAngle(senOne[0], senTwo[0], senThree[0], senFour[0], senFive[0], senSix[0]);
                     //Console.WriteLine("Data: " + degree);
-
-
+                    
                     float[] tempArr = { senOne[0], senTwo[0], senThree[0], senFour[0], senFive[0], senSix[0] };
 
                     highSens[0] = tempArr.Max();//first highest sensor value
@@ -74,11 +75,9 @@ namespace SenNetDataInterpreter.Class_Files
                         Console.WriteLine("Data: " + degree + " sensor val: " + senOne[0] + " " + senTwo[0] + " " + senThree[0] + " " + senFour[0] + " " + senFive[0] + " " + senSix[0]);
                     }
                 }
-                catch
-                {
-
-                }
+                catch { }
             }
+            */
             
 
             if (length >= 3)
@@ -86,16 +85,16 @@ namespace SenNetDataInterpreter.Class_Files
                 //calculate degree of each node
                 for (int i = 0; i < length; i++)
                 {
-                    float[] tempArr = { senOne[i], senTwo[i], senThree[i], senFour[i], senFive[i], senSix[i] };
+                    float[] tempArr = { nodes[i].SenOne, nodes[i].SenTwo, nodes[i].SenThr, nodes[i].SenFou, nodes[i].SenFiv, nodes[i].SenSix };
 
-                    nodeDegrees[i] = determineAngle(senOne[i], senTwo[i], senThree[i], senFour[i], senFive[i], senSix[i]);
+                    nodeDegrees[i] = determineAngle(nodes[i].SenOne, nodes[i].SenTwo, nodes[i].SenThr, nodes[i].SenFou, nodes[i].SenFiv, nodes[i].SenSix);
                     highSens[i] = tempArr.Max();//first highest sensor value
                     secSens[i] = (from num in tempArr orderby num descending select num).Skip(1).First();//second highest sensor value
 
                     highSensIndex[i] = Array.IndexOf(tempArr, highSens[i]);
                     secSensIndex[i] = Array.IndexOf(tempArr, secSens[i]);
 
-                    if (highSens[i] > 50)
+                    if (highSens[i] > 40)
                     {
                         isTripped = true;
                     }
@@ -120,15 +119,12 @@ namespace SenNetDataInterpreter.Class_Files
                                 avgSensVal3 = (avgSensVal3 + tempVal / 6) / 2;
                                 break;
                         }
-
-
-
                     }
                 }
 
                 if (isTripped)
                 {
-                    data = triangulate(x[0], x[1], x[2], y[0], y[1], y[2], highSens[0], secSens[0], highSens[1], secSens[1], highSens[2], secSens[2], highSensIndex[0], secSensIndex[0], highSensIndex[1], secSensIndex[1], highSensIndex[2], secSensIndex[2], avgSensVal1, avgSensVal2, avgSensVal3);
+                    data = triangulate(nodes[0].X, nodes[1].X, nodes[2].X, nodes[0].Y, nodes[1].Y, nodes[2].Y, highSens[0], secSens[0], highSens[1], secSens[1], highSens[2], secSens[2], highSensIndex[0], secSensIndex[0], highSensIndex[1], secSensIndex[1], highSensIndex[2], secSensIndex[2], avgSensVal1, avgSensVal2, avgSensVal3);
 
                     double[] position = new double[2];
                     position = convToLatLon(data[0], data[1]);
@@ -145,8 +141,11 @@ namespace SenNetDataInterpreter.Class_Files
                     {
                         if (position[0] > 41 && position[0] < 43 && position[1] > -81 && position[1] < -79)
                         {
-                            Console.WriteLine(position[0] + "," + position[1]);
-                            PipeReadThread.data.Add(position[0] + "," + position[1]);
+                            string tempString = position[0] + "," + position[1];
+                            Tuple<string, DateTime, bool> tempData = Tuple.Create(tempString, DateTime.Now, false);
+
+                            //Console.WriteLine(tempString);
+                            PipeThread.data.Add(tempData);
                         }
                     }
 
@@ -364,7 +363,7 @@ namespace SenNetDataInterpreter.Class_Files
 
             if (vR >= vB)
             {
-                sourceInt = 20 * Convert.ToSingle(Math.Log10(1609.34 * d * vR / (1 - vB / vR)));          //Conversion to Meters from Miles
+                sourceInt = 20 * Convert.ToSingle(Math.Log10(1609.34 * d * vR / (1 - vB / vR)));//Conversion to Meters from Miles
             }
             else
             {

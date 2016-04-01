@@ -13,7 +13,7 @@ namespace SenNetDataHandler.Class_Files
 {
     static class PipeHandler
     {
-        static TcpClient tcpCTest = new TcpClient("10.1.24.243", 9999);
+        static TcpClient tcpCTest = new TcpClient("10.1.24.149", 9999);
         static NetworkStream netStream = tcpCTest.GetStream();
         static StreamWriter streWriter = new StreamWriter(netStream);
         public static Dictionary<int, string> dataStore = new Dictionary<int, string>();

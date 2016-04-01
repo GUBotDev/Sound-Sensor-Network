@@ -8,7 +8,7 @@ namespace SensorNetworkInterface.Class_Files
 {
     public static class Program
     {
-        public static Form1 form1;
+        public static MainForm mainForm;
        
         /// <summary>
         /// The main entry point for the application.
@@ -18,11 +18,9 @@ namespace SensorNetworkInterface.Class_Files
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //connection = new Thread(Connection.connThread);
-            //connection.Start();
-            
-            form1 = new Form1();
-            Application.Run(form1);
+
+            mainForm = new MainForm();
+            Application.Run(mainForm);
         }
     }
 }

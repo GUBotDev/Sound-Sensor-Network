@@ -9,39 +9,7 @@ namespace SenNetDataInterpreter.Class_Files
 {
     static class PipeParser
     {
-        static bool sen1 = false;
-        static bool sen2 = false;
-        static bool sen3 = false;
-        static int senI1 = 0;
-        static int senI2 = 0;
-        static int senI3 = 0;
-        /*
-        static List<DateTime> date = new List<DateTime>();
-        static List<Int32> node = new List<Int32>();
-        static List<Int32> x = new List<Int32>();
-        static List<Int32> y = new List<Int32>();
-        static List<Int32> senOne = new List<Int32>();
-        static List<Int32> senTwo = new List<Int32>();
-        static List<Int32> senThree = new List<Int32>();
-        static List<Int32> senFour = new List<Int32>();
-        static List<Int32> senFive = new List<Int32>();
-        static List<Int32> senSix = new List<Int32>();
-        */
-
-        static DateTime[] date = new DateTime[3];
-        static Int32[] node = new Int32[3];
-        static Int32[] x = new Int32[3];
-        static Int32[] y = new Int32[3];
-        static Int32[] senOne = new Int32[3];
-        static Int32[] senTwo = new Int32[3];
-        static Int32[] senThree = new Int32[3];
-        static Int32[] senFour = new Int32[3];
-        static Int32[] senFive = new Int32[3];
-        static Int32[] senSix = new Int32[3];
-
-        public static bool node1 = false;
-        public static bool node2 = false;
-        public static bool node3 = false;
+        static Node[] nodes = new Node[3];
 
         //split string first via ':', then split via space
         public static void parsePipeString(string _readLine)
@@ -55,7 +23,20 @@ namespace SenNetDataInterpreter.Class_Files
                 {
                     //Console.WriteLine("Error.");
                 }
-                else
+                else if (dataSplit[0] == "Event")
+                {
+                    //request audio for 1 minute interval 30 before 30 after
+                    //request sensor data for that time
+
+                    //"Event 1 |-32768 -> 32768| yyyy-MM-dd_HH-mm-ss.ffff"
+                    
+                    int nodeNum = Convert.ToInt32(dataSplit[1]);
+                    int amplitude = Math.Abs(Convert.ToInt32(dataSplit[2]));
+                    DateTime dt = DateTime.ParseExact(dataSplit[3], "yyyy-MM-dd_HH-mm-ss.ffff", CultureInfo.InvariantCulture);
+
+                    PipeThread.messages.Add("Request " + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss.ffff") + " " + 60.ToString(), DateTime.Now);
+                }
+                else if (dataSplit[0] == "Node")
                 {
                     DateTime dateT;
                     int nodeT, xT, yT, senOneT, senTwoT, senThreeT, senFourT, senFiveT, senSixT;
@@ -94,112 +75,65 @@ namespace SenNetDataInterpreter.Class_Files
                     if (senFiveT == -1) { dataIntact = false; };
                     if (senSixT == -1) { dataIntact = false; };
 
-                    if (nodeT == 0)
-                    {
-                        date[0] = dateT;
-                        node[0] = nodeT;
-                        x[0] = xT;
-                        y[0] = yT;
-                        senOne[0] = senOneT;
-                        senTwo[0] = senTwoT;
-                        senThree[0] = senThreeT;
-                        senFour[0] = senFourT;
-                        senFive[0] = senFiveT;
-                        senSix[0] = senSixT;
 
-                        sen1 = true;
-                        senI1++;
-
-                        if (node1 == false)
-                        {
-                            double[] position = new double[2];
-                            position = Calculation.convToLatLon(xT, yT);
-
-                            PipeReadThread.data.Add("Node," + nodeT + "," + position[0] + "," + position[1]);
-
-                            Console.WriteLine("Node," + nodeT + "," + position[0] + "," + position[1]);
-
-                            node1 = true;
-                        }
-                    }
-                    else if (nodeT == 1)
-                    {
-                        date[1] = dateT;
-                        node[1] = nodeT;
-                        x[1] = xT;
-                        y[1] = yT;
-                        senOne[1] = senOneT;
-                        senTwo[1] = senTwoT;
-                        senThree[1] = senThreeT;
-                        senFour[1] = senFourT;
-                        senFive[1] = senFiveT;
-                        senSix[1] = senSixT;
-
-                        sen2 = true;
-                        senI2++;
-
-                        if (node2 == false)
-                        {
-                            double[] position = new double[2];
-                            position = Calculation.convToLatLon(xT, yT);
-
-                            PipeReadThread.data.Add("Node," + nodeT + "," + position[0] + "," + position[1]);
-
-                            Console.WriteLine("Node," + nodeT + "," + position[0] + "," + position[1]);
-
-                            node2 = true;
-                        }
-                    }
-                    else if (nodeT == 2)
-                    {
-                        date[2] = dateT;
-                        node[2] = nodeT;
-                        x[2] = xT;
-                        y[2] = yT;
-                        senOne[2] = senOneT;
-                        senTwo[2] = senTwoT;
-                        senThree[2] = senThreeT;
-                        senFour[2] = senFourT;
-                        senFive[2] = senFiveT;
-                        senSix[2] = senSixT;
-
-                        sen3 = true;
-                        senI3++;
-
-                        if (node3 == false)
-                        {
-                            double[] position = new double[2];
-                            position = Calculation.convToLatLon(xT, yT);
-
-                            PipeReadThread.data.Add("Node," + nodeT + "," + position[0] + "," + position[1]);
-
-                            Console.WriteLine("Node," + nodeT + "," + position[0] + "," + position[1]);
-
-                            node3 = true;
-                        }
-                    }
-                    else
+                    //create node object once triangulation code can be scaled i.e. assume infinite nodes
+                    if (nodeT > 3 || nodeT < 0)
                     {
                         dataIntact = false;
                     }
-
-                    if (senI1 > 50 || senI2 > 50 || senI3 > 50)
+                    else
                     {
-                        //Console.WriteLine("Stagnated Data, check sensor connectivity");
+                        nodes[nodeT].Date = dateT;
+                        nodes[nodeT].NodeNumber = nodeT;
+                        nodes[nodeT].X = xT;
+                        nodes[nodeT].Y = yT;
+                        nodes[nodeT].SenOne = senOneT;
+                        nodes[nodeT].SenTwo = senTwoT;
+                        nodes[nodeT].SenThr = senThreeT;
+                        nodes[nodeT].SenFou = senFourT;
+                        nodes[nodeT].SenFiv = senFiveT;
+                        nodes[nodeT].SenSix = senSixT;
+
+                        nodes[nodeT].Iterator++;
+
+                        if (nodes[nodeT].Activated == false)
+                        {
+                            double[] position = new double[2];
+                            string tempString = "Node," + nodeT + "," + position[0] + "," + position[1];
+                            Tuple<string, DateTime, bool> tempData = Tuple.Create(tempString, DateTime.Now, false);
+                            position = Calculation.convToLatLon(xT, yT);
+
+                            PipeThread.data.Add(tempData);
+
+                            //Console.WriteLine(tempString);
+
+                            nodes[nodeT].Activated = true;
+                        }
                     }
 
-                    if (dataIntact && sen1 && sen2 && sen3)
+                    foreach (Node node in nodes)
                     {
-                        Calculation.triangulatePosition(date.ToList(), node.ToList(), x.ToList(), y.ToList(), senOne.ToList(), senTwo.ToList(), senThree.ToList(), senFour.ToList(), senFive.ToList(), senSix.ToList());
+                        if (node.Iterator > 50)
+                        {
+                            Console.WriteLine("Stagnated Data, check sensor connectivity");
+                        }
+                    }
+                    
 
-                        senI1 = 0;
-                        senI2 = 0;
-                        senI3 = 0;
+                    if (dataIntact && nodes.Any(o => o.Activated == false))
+                    {
+                        Calculation.triangulatePosition(nodes);
+
+                        foreach (Node node in nodes)
+                        {
+                            node.Iterator = 0;
+                        }
                     }
                     else
                     {
                         //PipeReadThread.data.Add("Data not intact.");
                     }
+
                     //read backwards, take only one value,kill rest
                     /*
                     if (senI1 > 0 && senI2 > 0 && senI3 > 0)

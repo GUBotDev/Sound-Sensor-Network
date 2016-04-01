@@ -11,12 +11,13 @@ using System.Windows.Forms;
 
 namespace SensorNetworkInterface.Class_Files
 {
-    static class UserInterface
+    static class MapInterface
     {
-        static List<GMarkerGoogle> markers = new List<GMarkerGoogle>();
+        static Dictionary<GMarkerGoogle, DateTime> markers = new Dictionary<GMarkerGoogle, DateTime>();
         static List<GMapOverlay> overlays = new List<GMapOverlay>();
         static GMapOverlay markersOverlay;
         static int markersPlaced = 0;
+        static int saveTimeFor = 30;
         
         public static void createMarker(double x, double y, string name)
         {
@@ -25,23 +26,22 @@ namespace SensorNetworkInterface.Class_Files
                 markersOverlay = new GMapOverlay("markers");
 
                 GMarkerGoogle marker = new GMarkerGoogle(new PointLatLng(x, y), GMarkerGoogleType.red_dot);
+                DateTime dt = DateTime.Now;
 
                 marker.ToolTipMode = MarkerTooltipMode.Always;
                 marker.ToolTip = new GMapToolTip(marker);
-                marker.ToolTipText = (x + ", " + y).ToString();
+                marker.ToolTipText = (x + ", " + y + ", " + dt.ToString("hh:mm:ss.ffff"));
                 
-                if (markersPlaced >= 6)
+                if (markers.Any() && markers.First().Value.AddMinutes(saveTimeFor) < DateTime.Now)//markersPlaced >= 6)
                 {
                     //markers.ElementAt(1).IsVisible = true;
                     //markers.ElementAt(2).IsVisible = false;
                     //markers.ElementAt(1).IsVisible = false;
                     //markers.ElementAt(0).IsVisible = false;
                     //markers.Last().Dispose();
-                    overlays.ToList().First().Markers.Remove(markers.ToList().First());
-                    markers.Remove(markers.ToList().First());
+                    overlays.ToList().First().Markers.Remove(markers.First().Key);
+                    markers.Remove(markers.First().Key);
                     overlays.Remove(overlays.ToList().First());
-
-                    //Console.WriteLine("Should remove marker");
                 }
                 else
                 {
@@ -49,23 +49,20 @@ namespace SensorNetworkInterface.Class_Files
                 }
 
                 markersOverlay.Markers.Add(marker);
-                markers.Add(marker);
+                markers.Add(marker, dt);
                 overlays.Add(markersOverlay);
 
-                Program.form1.gMap.Invoke(new Action(() =>
+                Program.mainForm.gMap.Invoke(new Action(() =>
                     {
-                        //Program.form1.addMarker(marker, markersOverlay, name);
-
-                        Program.form1.gMap.Overlays.Add(markersOverlay);
-                        Program.form1.gMap.Position = marker.Position;
+                        Program.mainForm.gMap.Overlays.Add(markersOverlay);
+                        Program.mainForm.gMap.Position = marker.Position;
                         //gMap.Position = main;
                     }
                 ));
-
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Create Marker: " + ex.Message);
+                Console.WriteLine("Create Marker: " + ex);
             }
         }
         
@@ -85,15 +82,15 @@ namespace SensorNetworkInterface.Class_Files
                 markerNode.ToolTip = new GMapToolTip(markerNode);
                 markerNode.ToolTipText = "Node " + nodeNum;
                 
-                Program.form1.gMap.Invoke(new Action(() =>
+                Program.mainForm.gMap.Invoke(new Action(() =>
                 {
-                    Program.form1.gMap.Overlays.Add(markersOverlay);
-                    Program.form1.gMap.Position = point;
+                    Program.mainForm.gMap.Overlays.Add(markersOverlay);
+                    Program.mainForm.gMap.Position = point;
                     //gMap.Position = main;
 
-                    //Program.form1.addMarker(marker, markersOverlay, name);
+                    //Program.mainForm.addMarker(marker, markersOverlay, name);
 
-                    //Program.form1.addNode(nodeNum, x, y, markersOverlay);
+                    //Program.mainForm.addNode(nodeNum, x, y, markersOverlay);
 
                     //gMap.Position = main;
                 }
@@ -105,5 +102,6 @@ namespace SensorNetworkInterface.Class_Files
                 Console.WriteLine("Add Node: " + ex.Message);
             }
         }
+
     }
 }

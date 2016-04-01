@@ -12,30 +12,42 @@ namespace SensorNetworkInterface.Class_Files
 {
     static class Connection
     {
-        static TcpClient tcpCTest;
-        static NetworkStream netStream;
-        static StreamReader streReader;
+        public static volatile bool _continue = true;
+
+        public static TcpClient tcpRead;
+        static NetworkStream netRead;
+        static StreamReader streRead;
+
+        public static TcpClient tcpFile;
+        static NetworkStream netFile;
+        static StreamReader streFile;
+        static StreamWriter streFileWriter;
+
         static bool hasBeenRead = false;
+
+        static string ip = Program.mainForm.returnIP();
 
         public static void connThread()
         {
+            Program.mainForm.printConsole("Marker thread waiting 2.5 seconds.");
+
             Thread.Sleep(1000);
 
-            Console.WriteLine("Connection thread started.");
-
-            while (true)
+            Program.mainForm.printConsole("Marker thread started.");
+            
+            while (_continue)
             {
                 try
                 {
-                    tcpCTest = new TcpClient("10.1.24.243", 9998);
-                    netStream = tcpCTest.GetStream();
-                    streReader = new StreamReader(netStream);
+                    tcpRead = new TcpClient(ip, 9998);
+                    netRead = tcpRead.GetStream();
+                    streRead = new StreamReader(netRead);
 
-                    Console.WriteLine("Connected to Interpreter.");
+                    Program.mainForm.printConsole("Connected to Interpreter.");
                     
-                    while (true)
+                    while (_continue)
                     {
-                        string line = (string)streReader.ReadLine();
+                        string line = (string)streRead.ReadLine();
                         string[] lineSplit = line.Split(',');
 
                         if (lineSplit[0].Contains("Node"))
@@ -44,23 +56,23 @@ namespace SensorNetworkInterface.Class_Files
                             double x = Convert.ToDouble(lineSplit[2]);
                             double y = Convert.ToDouble(lineSplit[3]);
 
-                            Console.WriteLine("Node: " + line);
+                            Program.mainForm.printConsole("Node: " + line);
 
-                            UserInterface.addNode(nodeNum, x, y);
+                            MapInterface.addNode(nodeNum, x, y);
                         }
                         else if (lineSplit.Length == 2)
                         {
                             if (hasBeenRead)
                             {
-                                Console.WriteLine();
+                                Program.mainForm.printConsole("");
                             }
 
-                            //Console.WriteLine(line);
+                            Program.mainForm.printConsole("Event: " + line);
 
                             double x = Convert.ToDouble(lineSplit[0]);
                             double y = Convert.ToDouble(lineSplit[1]);
 
-                            UserInterface.createMarker(x, y, "Test");
+                            MapInterface.createMarker(x, y, "Test");
 
                             hasBeenRead = false;
                         }
@@ -75,12 +87,113 @@ namespace SensorNetworkInterface.Class_Files
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("ConnThread: " + ex.Message);
-                    Thread.Sleep(2500);
+                    Program.mainForm.printConsole("Main connection disrupted, trying to reconnect...");//"ConnThread: " + ex.Message);
+                    Thread.Sleep(5000);
                 }
             }
+        }
 
-            
+
+        public static void fileThread()
+        {
+            bool wasSent = false;
+
+            Program.mainForm.printConsole("File thread waiting 2.5 seconds.");
+
+            Thread.Sleep(2500);
+
+            Program.mainForm.printConsole("File thread started.");
+
+            while (_continue)
+            {
+                try
+                {
+                    string allFiles = "";
+
+                    tcpFile = new TcpClient(ip, 9997);
+                    netFile = tcpFile.GetStream();
+                    streFile = new StreamReader(netFile);
+                    streFileWriter = new StreamWriter(netFile);
+
+                    Program.mainForm.printConsole("Connected to Interpreter for File Transfer.");
+
+                    if (!wasSent)
+                    {
+                        string[] temp = Directory.GetFiles("audio/", "*.wav").Select(fileName => Path.GetFileNameWithoutExtension(fileName)).ToArray();
+
+                        foreach (string input in temp)
+                        {
+                            allFiles += input + " ";
+                        }
+
+                        streFileWriter.WriteLine("Existing_Files");
+                        streFileWriter.Flush();
+
+                        streFileWriter.WriteLine(allFiles);
+                        streFileWriter.Flush();
+
+                        wasSent = true;
+                    }
+
+                    while (_continue)
+                    {
+                        string line = (string)streFile.ReadLine();
+                        string[] lineSplit = line.Split(' ');
+                        long bytes;
+                        string name;
+                        DateTime dt = DateTime.Now;
+
+                        //Program.mainForm.printConsole(line);
+
+                        if (lineSplit[0] == "File:")
+                        {
+                            name = lineSplit[1];
+                            bytes = Convert.ToInt64(lineSplit[2]);
+
+                            streFileWriter.WriteLine("Ready");
+                            streFileWriter.Flush();
+
+                            using (var output = File.Create("audio/" + name))
+                            {
+                                Program.mainForm.printConsole("Server sending audio");
+
+                                var buffer = new byte[bytes];
+                                int bytesRead = 0;
+                                int bytesLeft = Convert.ToInt32(bytes);
+
+                                while (bytesLeft != 0)
+                                {
+                                    bytesRead = netFile.Read(buffer, 0, buffer.Length);
+
+                                    //Program.mainForm.printConsole(bytes + " " + bytesLeft);
+
+                                    output.Write(buffer, 0, bytesRead);
+
+                                    bytesLeft -= bytesRead;
+                                }
+
+                                Program.mainForm.printConsole("Audio received");
+                            }
+
+                            Program.mainForm.Invoke(new Action(() =>
+                            {
+                                string[] nameS = name.Split('.');
+
+                                Program.mainForm.addWavToListBox(nameS[0]);
+                            }
+                            ));
+
+                            Program.mainForm.printConsole(name + " added.");
+                        
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Program.mainForm.printConsole("File connection disrupted, trying to reconnect...");//"FileThread: " + ex.Message);
+                    Thread.Sleep(5000);
+                }
+            }
         }
     }
 }
