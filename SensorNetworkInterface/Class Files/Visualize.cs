@@ -54,6 +54,7 @@ namespace SensorNetworkInterface.Class_Files
 
                         double tempYOff = 44100 / y;
                         int initSamp = 0;
+                        int frequencyInterval = (44100 / 2) / y;
 
                         for (int xPos = 0; xPos < x; xPos++)
                         {
@@ -61,13 +62,24 @@ namespace SensorNetworkInterface.Class_Files
 
                             for (int i = initSamp; i < samplesPerPixel + initSamp; i++)
                             {
-                                xSamples.Add(ratioList.ElementAt(i));
+                                xSamples.Add(Math.Round(ratioList.ElementAt(i) * 65536 - 32768));
+                                xSamples.Add(0);
                             }
+
+                            Program.mainForm.printConsole("Performing fft");
+
+                            double[] fft = xSamples.ToArray();
+                            
+                            //FFT(ref fft, true);
+                            int currentFreq = 0;
+
+                            Program.mainForm.printConsole("Displaying FFT");
 
                             //iterate through all pixels
                             for (int yPos = 0; yPos < y; yPos++)
                             {
-                                byte tempB = (byte)(xSamples.ElementAt(yPos) * y);
+                                currentFreq += frequencyInterval;
+                                byte tempB = (byte)fft[currentFreq];//(byte)(xSamples.ElementAt(yPos) * y);
 
                                 bmp.SetPixel(xPos, yPos, getColor(tempB));//set pixel at y height
                             }
@@ -159,6 +171,9 @@ namespace SensorNetworkInterface.Class_Files
 
             WaveFileWriter.CreateWaveFile(file, waveStream);
         }
+
+
+        
     }
 
     /// <summary>

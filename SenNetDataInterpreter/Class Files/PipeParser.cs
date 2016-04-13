@@ -10,6 +10,7 @@ namespace SenNetDataInterpreter.Class_Files
     static class PipeParser
     {
         static Node[] nodes = new Node[3];
+        static bool isInitialized = false;
 
         //split string first via ':', then split via space
         public static void parsePipeString(string _readLine)
@@ -19,25 +20,31 @@ namespace SenNetDataInterpreter.Class_Files
 
             try
             {
-                if (dataSplit.Length != 10)
-                {
-                    //Console.WriteLine("Error.");
-                }
-                else if (dataSplit[0] == "Event")
+                if (dataSplit[0] == "Event")
                 {
                     //request audio for 1 minute interval 30 before 30 after
                     //request sensor data for that time
 
                     //"Event 1 |-32768 -> 32768| yyyy-MM-dd_HH-mm-ss.ffff"
-                    
-                    int nodeNum = Convert.ToInt32(dataSplit[1]);
-                    int amplitude = Math.Abs(Convert.ToInt32(dataSplit[2]));
-                    DateTime dt = DateTime.ParseExact(dataSplit[3], "yyyy-MM-dd_HH-mm-ss.ffff", CultureInfo.InvariantCulture);
 
-                    PipeThread.messages.Add("Request " + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss.ffff") + " " + 60.ToString(), DateTime.Now);
+                    //int nodeNum = Convert.ToInt32(dataSplit[1]);
+                    //int amplitude = Math.Abs(Convert.ToInt32(dataSplit[2]));
+                    DateTime dt = DateTime.ParseExact(dataSplit[1], "yyyy-MM-dd_HH-mm-ss.ffff", CultureInfo.InvariantCulture);
+
+                    PipeThread.messages.Add("Request " + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss.ffff"), DateTime.Now);
+                    PipeThread.messages.Add("RequestAudio " + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss.ffff") + " " + 20.ToString(), DateTime.Now);
+
+                    Console.WriteLine("Added message: Event");
                 }
                 else if (dataSplit[0] == "Node")
                 {
+                    if (!isInitialized)
+                    {
+                        nodes[0] = new Node();
+                        nodes[1] = new Node();
+                        nodes[2] = new Node();
+                    }
+
                     DateTime dateT;
                     int nodeT, xT, yT, senOneT, senTwoT, senThreeT, senFourT, senFiveT, senSixT;
 
@@ -50,7 +57,6 @@ namespace SenNetDataInterpreter.Class_Files
                     senFiveT = -1;
                     senSixT = -1;
 
-                    DateTime.TryParseExact(dataSplit[0], "yyyy-MM-dd_HH-mm-ss.ffff", CultureInfo.InvariantCulture, DateTimeStyles.None, out dateT);
                     Int32.TryParse(dataSplit[1], out nodeT);
                     Int32.TryParse(dataSplit[2], out xT);
                     Int32.TryParse(dataSplit[3], out yT);
@@ -60,6 +66,7 @@ namespace SenNetDataInterpreter.Class_Files
                     Int32.TryParse(dataSplit[7], out senFourT);
                     Int32.TryParse(dataSplit[8], out senFiveT);
                     Int32.TryParse(dataSplit[9], out senSixT);
+                    DateTime.TryParseExact(dataSplit[10], "yyyy-MM-dd_HH-mm-ss.ffff", CultureInfo.InvariantCulture, DateTimeStyles.None, out dateT);
 
                     //Console.WriteLine(dataSplit[0] + " " + dataSplit[1] + " " + dataSplit[2] + " " + dataSplit[3] + " " + dataSplit[4]);
                     //Console.WriteLine(dateT + "  " + nodeT + " " + xT + " " + yT + " " + senOneT + " " + senTwoT + " " + senThreeT + " " + senFourT + " " + senFiveT + " " + senSixT);
@@ -74,8 +81,7 @@ namespace SenNetDataInterpreter.Class_Files
                     if (senFourT == -1) { dataIntact = false; };
                     if (senFiveT == -1) { dataIntact = false; };
                     if (senSixT == -1) { dataIntact = false; };
-
-
+                    
                     //create node object once triangulation code can be scaled i.e. assume infinite nodes
                     if (nodeT > 3 || nodeT < 0)
                     {
@@ -101,7 +107,7 @@ namespace SenNetDataInterpreter.Class_Files
                             double[] position = new double[2];
                             string tempString = "Node," + nodeT + "," + position[0] + "," + position[1];
                             Tuple<string, DateTime, bool> tempData = Tuple.Create(tempString, DateTime.Now, false);
-                            position = Calculation.convToLatLon(xT, yT);
+                            //position = Calculation.convToLatLon(xT, yT);
 
                             PipeThread.data.Add(tempData);
 
@@ -248,9 +254,9 @@ namespace SenNetDataInterpreter.Class_Files
                     */
                 }
             }
-            catch// (Exception exception)
+            catch (Exception exception)
             {
-                //Console.WriteLine("PipeParser: " + exception);
+                Console.WriteLine("PipeParser: " + exception);
             }
 
         }

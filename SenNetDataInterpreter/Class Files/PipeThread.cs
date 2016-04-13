@@ -8,6 +8,7 @@ using System.IO;
 using System.Threading;
 using System.Net;
 using System.Net.Sockets;
+using NAudio.Wave;
 
 namespace SenNetDataInterpreter.Class_Files
 {
@@ -16,9 +17,9 @@ namespace SenNetDataInterpreter.Class_Files
         private static volatile bool _continue = true;
         private static TcpListener tcpSTest;
         private static TcpListener tcpWNTest;
+        private static TcpListener tcpARTest;
         private static TcpListener tcpWTest;
         private static TcpListener tcpFTest;
-        private static int freq = 0;
         public static Dictionary<string, DateTime> messages = new Dictionary<string, DateTime>();
         public static List<Tuple<string, DateTime, bool>> data = new List<Tuple<string, DateTime, bool>>();
         public static Dictionary<string, DateTime> files = new Dictionary<string, DateTime>();
@@ -28,7 +29,7 @@ namespace SenNetDataInterpreter.Class_Files
         public static void readNode()
         {
             Console.WriteLine("Read Thread Started.");
-            tcpSTest = new TcpListener(IPAddress.Any, 10000);
+            tcpSTest = new TcpListener(IPAddress.Any, 10001);
             tcpSTest.Start();
 
             //inputStream = new NamedPipeClientStream("localhost", "senNetData
@@ -47,23 +48,16 @@ namespace SenNetDataInterpreter.Class_Files
                     {
                         while (true)
                         {
-                            /*
                             string line = streamReader.ReadLine();
                             string[] split = line.Split(' ');
                             string name = split[0];
 
-                            //Console.WriteLine("Interpreter: " + line);
+                            Console.WriteLine("Read Node: " + line);
 
-                            freq++;
-                            //Console.WriteLine(line);
                             PipeParser.parsePipeString(line);
-                            */
                         }
                     }
-                    catch
-                    {
-                        //don't display, this breaks under odd circumstances without ruining data integrity
-                    }
+                    catch { }
 
                     client.Close();
                 });
@@ -71,14 +65,13 @@ namespace SenNetDataInterpreter.Class_Files
                 childSocketThread.Start();
             }//end while
         }//end function
-
+        
         public static void writeNode()
         {
             Console.WriteLine("Write Thread Started.");
-            tcpWNTest = new TcpListener(IPAddress.Any, 9999);
+            tcpWNTest = new TcpListener(IPAddress.Any, 10000);
             tcpWNTest.Start();
-
-            //inputStream = new NamedPipeClientStream("localhost", "senNetData
+            
             while (_continue)
             {
                 Socket client = tcpWNTest.AcceptSocket();
@@ -94,10 +87,21 @@ namespace SenNetDataInterpreter.Class_Files
 
                     try
                     {
+                        /*
+                        messages.Add("Echo 5", DateTime.Now);
+                        messages.Add("Echo 1", DateTime.Now);
+                        messages.Add("Echo 2", DateTime.Now);
+                        messages.Add("Echo 3", DateTime.Now);
+                        messages.Add(("Request " + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss.ffff")), DateTime.Now);
+                        messages.Add("Echo 4", DateTime.Now);
+                        */
+                        //Console.WriteLine(messages.ToArray().Length);
+
                         while (true)
                         {
+                            
                             List<string> tempAllMessages;
-
+                            
                             tempAllMessages = messages.Keys.ToList().Except(sentMessages).ToList();
 
                             if (tempAllMessages.Any())
@@ -105,18 +109,25 @@ namespace SenNetDataInterpreter.Class_Files
                                 streamWriter.WriteLine(tempAllMessages.ToList().First());
                                 sentMessages.Add(tempAllMessages.ToList().First());
 
+                                Console.WriteLine("Sent: " + tempAllMessages.ToList().First());
+
                                 streamWriter.Flush();
                             }
-                            
+
                             if (messages.Any() && messages.ToList().First().Value.AddSeconds(saveMessagesFor) < DateTime.Now)
                             {
+                                Console.WriteLine("Removed: " + messages.ToList().First().Key);
+
                                 messages.Remove(messages.ToList().First().Key);
                             }
 
                             Thread.Sleep(10);
                         }
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
 
                     client.Close();
                 });
@@ -125,15 +136,16 @@ namespace SenNetDataInterpreter.Class_Files
             }//end while
         }//end function
 
+/// ///////////////////////////////////////////////////////
         public static void audioReadNode()
         {
             Console.WriteLine("Audio Read Thread Started.");
-            tcpWNTest = new TcpListener(IPAddress.Any, 10001);
-            tcpWNTest.Start();
+            tcpARTest = new TcpListener(IPAddress.Any, 9999);
+            tcpARTest.Start();
             
             while (_continue)
             {
-                Socket client = tcpWNTest.AcceptSocket();
+                Socket client = tcpARTest.AcceptSocket();
 
                 Console.WriteLine("Connection to node for reading audio established.");
 
@@ -141,6 +153,11 @@ namespace SenNetDataInterpreter.Class_Files
                 {
                     NetworkStream netStream = new NetworkStream(client);
                     StreamReader streamReader = new StreamReader(netStream);
+                    string line;
+                    string[] split;
+                    string name;
+                    int bytes;
+                    byte[] audioBytes;
 
                     List<string> sentMessages = new List<string>();
 
@@ -151,7 +168,50 @@ namespace SenNetDataInterpreter.Class_Files
                             //bytestream? convert (1, 44100) to wave, save, add to dictionary to send to interfaces
                             //send the stream of the sensor that triggered an event most recently
 
+                            //transfer, save, add to files dictionary - rest is automatic
+
+
                             //files.Add(key, DateTime.Now);
+                            line = streamReader.ReadLine();
+                            split = line.Split(' ');
+
+                            if (split[0] == "Audio")
+                            {
+                                name = split[1];
+                                bytes = Convert.ToInt32(split[2]);
+                                audioBytes = new byte[bytes];
+
+                                netStream.Read(audioBytes, 0, bytes);
+
+                                short[] sampleBufShort = new short[bytes / 2];
+                                byte a, b;
+
+                                for (int i = 0; i < bytes; i += 2)
+                                {
+                                    a = audioBytes[i];
+                                    b = audioBytes[i + 1];
+
+                                    sampleBufShort[i / 2] = returnShort(a, b);
+                                }
+                                
+                                byte[] byteArray = new byte[bytes];
+                                Buffer.BlockCopy(sampleBufShort, 0, byteArray, 0, byteArray.Length);
+
+                                DateTime dt = DateTime.Now;
+                                //string file = dt.ToString("hh:mm:ss:ffff");//Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".wav");
+                                WaveFormat waveFormat = new WaveFormat(44100, 16, 1);
+                                Stream memStream = new MemoryStream(byteArray);
+                                WaveStream waveStream = new WaveStreamDer(memStream, waveFormat);
+
+                                //var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+                                string file = "audio/" + name + ".wav";
+
+                                WaveFileWriter.CreateWaveFile(file, waveStream);
+
+                                Console.WriteLine("Audio downloaded");
+                            }
+
+                            Thread.Sleep(1);
                         }
                     }
                     catch { }
@@ -168,8 +228,7 @@ namespace SenNetDataInterpreter.Class_Files
             Console.WriteLine("Write Thread Started.");
             tcpWTest = new TcpListener(IPAddress.Any, 9998);
             tcpWTest.Start();
-
-            //inputStream = new NamedPipeClientStream("localhost", "senNetData
+            
             while (_continue)
             {
                 Socket client = tcpWTest.AcceptSocket();
@@ -378,6 +437,60 @@ namespace SenNetDataInterpreter.Class_Files
 
                 Thread.Sleep(10);
             }
+        }
+
+        private static short returnShort(byte a, byte b)
+        {
+            string inputA = Convert.ToString(a, 2).PadLeft(8, '0');
+            string inputB = Convert.ToString(b, 2).PadLeft(8, '0');
+
+            string shortString = inputA + inputB;
+
+            short output = Convert.ToInt16(shortString, 2);
+
+            return output;
+        }
+    }
+
+    /// <summary>
+    /// Used to convert 16 bit data to wave files
+    /// </summary>
+    public class WaveStreamDer : WaveStream
+    {
+        private Stream sourceStream;
+        private WaveFormat waveFormat;
+
+        public WaveStreamDer(Stream sourceStream, WaveFormat waveFormat)
+        {
+            this.sourceStream = sourceStream;
+            this.waveFormat = waveFormat;
+        }
+
+        public override WaveFormat WaveFormat
+        {
+            get { return this.waveFormat; }
+        }
+
+        public override long Length
+        {
+            get { return this.sourceStream.Length; }
+        }
+
+        public override long Position
+        {
+            get
+            {
+                return this.sourceStream.Position;
+            }
+            set
+            {
+                this.sourceStream.Position = value;
+            }
+        }
+
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            return sourceStream.Read(buffer, offset, count);
         }
     }
 }

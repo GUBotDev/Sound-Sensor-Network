@@ -58,6 +58,7 @@ namespace SenNetDataInterpreter.Class_Files
             float[] highSensIndex = new float[length];
             float[] secSensIndex = new float[length];
             float[] data;
+
             /*
             if (length == 1)
             {
@@ -78,7 +79,6 @@ namespace SenNetDataInterpreter.Class_Files
                 catch { }
             }
             */
-            
 
             if (length >= 3)
             {
