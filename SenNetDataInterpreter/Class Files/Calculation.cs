@@ -124,7 +124,7 @@ namespace SenNetDataInterpreter.Class_Files
 
                 if (isTripped)
                 {
-                    data = triangulate(nodes[0].X, nodes[1].X, nodes[2].X, nodes[0].Y, nodes[1].Y, nodes[2].Y, highSens[0], secSens[0], highSens[1], secSens[1], highSens[2], secSens[2], highSensIndex[0], secSensIndex[0], highSensIndex[1], secSensIndex[1], highSensIndex[2], secSensIndex[2], avgSensVal1, avgSensVal2, avgSensVal3);
+                    data = triangulate((float)nodes[0].X, (float)nodes[1].X, (float)nodes[2].X, (float)nodes[0].Y, (float)nodes[1].Y, (float)nodes[2].Y, highSens[0], secSens[0], highSens[1], secSens[1], highSens[2], secSens[2], highSensIndex[0], secSensIndex[0], highSensIndex[1], secSensIndex[1], highSensIndex[2], secSensIndex[2], avgSensVal1, avgSensVal2, avgSensVal3);
 
                     double[] position = new double[2];
                     position = convToLatLon(data[0], data[1]);

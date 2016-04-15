@@ -34,7 +34,7 @@ namespace SenNetDataInterpreter.Class_Files
                     PipeThread.messages.Add("Request " + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss.ffff"), DateTime.Now);
                     PipeThread.messages.Add("RequestAudio " + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss.ffff") + " " + 20.ToString(), DateTime.Now);
 
-                    Console.WriteLine("Added message: Event");
+                    Console.WriteLine("Added message: Event" + _readLine);
                 }
                 else if (dataSplit[0] == "Node")
                 {
@@ -46,7 +46,8 @@ namespace SenNetDataInterpreter.Class_Files
                     }
 
                     DateTime dateT;
-                    int nodeT, xT, yT, senOneT, senTwoT, senThreeT, senFourT, senFiveT, senSixT;
+                    int nodeT, senOneT, senTwoT, senThreeT, senFourT, senFiveT, senSixT;
+                    double xT, yT;
 
                     dateT = new DateTime();
                     nodeT = -1;
@@ -58,8 +59,8 @@ namespace SenNetDataInterpreter.Class_Files
                     senSixT = -1;
 
                     Int32.TryParse(dataSplit[1], out nodeT);
-                    Int32.TryParse(dataSplit[2], out xT);
-                    Int32.TryParse(dataSplit[3], out yT);
+                    double.TryParse(dataSplit[2], out xT);
+                    double.TryParse(dataSplit[3], out yT);
                     Int32.TryParse(dataSplit[4], out senOneT);
                     Int32.TryParse(dataSplit[5], out senTwoT);
                     Int32.TryParse(dataSplit[6], out senThreeT);
@@ -89,6 +90,8 @@ namespace SenNetDataInterpreter.Class_Files
                     }
                     else
                     {
+                        Console.WriteLine(xT + " " + yT);
+
                         nodes[nodeT].Date = dateT;
                         nodes[nodeT].NodeNumber = nodeT;
                         nodes[nodeT].X = xT;
@@ -104,8 +107,7 @@ namespace SenNetDataInterpreter.Class_Files
 
                         if (nodes[nodeT].Activated == false)
                         {
-                            double[] position = new double[2];
-                            string tempString = "Node," + nodeT + "," + position[0] + "," + position[1];
+                            string tempString = "Node," + nodeT + "," + nodes[nodeT].X + "," + nodes[nodeT].Y;
                             Tuple<string, DateTime, bool> tempData = Tuple.Create(tempString, DateTime.Now, false);
                             //position = Calculation.convToLatLon(xT, yT);
 

@@ -126,10 +126,7 @@ namespace SensorNetworkInterface.Class_Files
                             allFiles += input + " ";
                         }
 
-                        streFileWriter.WriteLine("Existing_Files");
-                        streFileWriter.Flush();
-
-                        streFileWriter.WriteLine(allFiles);
+                        streFileWriter.WriteLine("Existing_Files " + allFiles);
                         streFileWriter.Flush();
 
                         wasSent = true;

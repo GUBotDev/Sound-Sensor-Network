@@ -9,6 +9,7 @@ using System.Threading;
 using System.Net;
 using System.Net.Sockets;
 using NAudio.Wave;
+using System.Globalization;
 
 namespace SenNetDataInterpreter.Class_Files
 {
@@ -157,6 +158,7 @@ namespace SenNetDataInterpreter.Class_Files
                     string[] split;
                     string name;
                     int bytes;
+                    int frequency;
                     byte[] audioBytes;
 
                     List<string> sentMessages = new List<string>();
@@ -179,42 +181,62 @@ namespace SenNetDataInterpreter.Class_Files
                             {
                                 name = split[1];
                                 bytes = Convert.ToInt32(split[2]);
-                                audioBytes = new byte[bytes];
-
-                                netStream.Read(audioBytes, 0, bytes);
-
-                                short[] sampleBufShort = new short[bytes / 2];
-                                byte a, b;
-
-                                for (int i = 0; i < bytes; i += 2)
-                                {
-                                    a = audioBytes[i];
-                                    b = audioBytes[i + 1];
-
-                                    sampleBufShort[i / 2] = returnShort(a, b);
-                                }
+                                frequency = Convert.ToInt32(split[3]);
+                                audioBytes = new byte[bytes + 1];
                                 
-                                byte[] byteArray = new byte[bytes];
-                                Buffer.BlockCopy(sampleBufShort, 0, byteArray, 0, byteArray.Length);
+                                Console.WriteLine("Receiving audio: " + name + " Bytes: " + bytes + " Frequency: " + frequency);
 
-                                DateTime dt = DateTime.Now;
-                                //string file = dt.ToString("hh:mm:ss:ffff");//Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".wav");
-                                WaveFormat waveFormat = new WaveFormat(44100, 16, 1);
-                                Stream memStream = new MemoryStream(byteArray);
-                                WaveStream waveStream = new WaveStreamDer(memStream, waveFormat);
+                                if (bytes > 0)
+                                {
+                                    Console.WriteLine("Converting to wave audio file.");
+                                    netStream.Read(audioBytes, 0, bytes);
 
-                                //var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-                                string file = "audio/" + name + ".wav";
+                                    short[] sampleBufShort = new short[bytes / 2  + 1];
+                                    byte a, b;
 
-                                WaveFileWriter.CreateWaveFile(file, waveStream);
+                                    for (int i = 0; i < bytes; i += 2)
+                                    {
+                                        a = audioBytes[i];
+                                        b = audioBytes[i + 1];
 
-                                Console.WriteLine("Audio downloaded");
+                                        sampleBufShort[i / 2] = returnShort(a, b);
+                                    }
+
+                                    byte[] byteArray = new byte[bytes + 1];
+                                    Buffer.BlockCopy(sampleBufShort, 0, byteArray, 0, byteArray.Length);
+
+                                    DateTime dt = DateTime.ParseExact(name, "yyyy-MM-dd_HH-mm-ss.ffff", CultureInfo.InvariantCulture);
+                                    //string file = dt.ToString("hh:mm:ss:ffff");//Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".wav");
+                                    WaveFormat waveFormat = new WaveFormat(frequency, 16, 1);
+                                    Stream memStream = new MemoryStream(byteArray);
+                                    WaveStream waveStream = new WaveStreamDer(memStream, waveFormat);
+
+                                    //var desktopFolder = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+                                    string file = "audio/" + dt.ToString("yyyy-MM-dd_HH-mm-ss_ffff") + ".wav";
+
+                                    Console.WriteLine("Resampling audio.");
+
+                                    WaveFormat waveForm44100 = new WaveFormat(44100, 16, 1);
+                                    WaveFormatConversionStream resampler = new WaveFormatConversionStream(waveForm44100, waveStream);
+
+                                    WaveFileWriter.CreateWaveFile(file, resampler);
+                                    
+                                    files.Add(dt.ToString("yyyy-MM-dd_HH-mm-ss_ffff"), dt);
+
+                                    Console.WriteLine("Audio downloadeded and converted.");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Audio download cancelled due to zero length.");
+                                }
                             }
 
                             Thread.Sleep(1);
                         }
                     }
-                    catch { }
+                    catch (Exception ex) {
+                        Console.WriteLine("Audio Thread: " + ex.Message);
+                    }
 
                     client.Close();
                 });
@@ -245,6 +267,7 @@ namespace SenNetDataInterpreter.Class_Files
                     try
                     {
                         Tuple<string, DateTime, bool> temp;
+                        /*
 
                         temp = Tuple.Create("Node,1,42.127,-80.087", DateTime.Now, true);
 
@@ -269,6 +292,7 @@ namespace SenNetDataInterpreter.Class_Files
                         temp = Tuple.Create("42.127943,-80.0869", DateTime.Now, false);
 
                         data.Add(temp);
+                        */
 
                         while (true)
                         {
@@ -306,10 +330,12 @@ namespace SenNetDataInterpreter.Class_Files
             tcpFTest = new TcpListener(IPAddress.Any, 9997);
             tcpFTest.Start();
 
+            /*
             if (!files.Any() && !files.ContainsKey("dressCodesS"))
             {
                 files.Add("dressCodesS", DateTime.Now);
             }
+            */
 
             while (_continue)
             {
@@ -330,14 +356,19 @@ namespace SenNetDataInterpreter.Class_Files
                         Thread.Sleep(2000);
 
                         string input = streamReader.ReadLine();
-                        string[] split;
+                        string[] split = input.Split(' ');
 
-                        if (input == "Existing_Files")
+                        if (split[0] == "Existing_Files" && split.Length > 1)
                         {
-                            input = streamReader.ReadLine();
-                            split = input.Split(' ');
+                            filesSent.AddRange(split.Skip(1).ToList());
+                        }
 
-                            filesSent.AddRange(split.ToList());
+
+                        string[] temp = Directory.GetFiles("audio/", "*.wav").Select(fileName => Path.GetFileNameWithoutExtension(fileName)).ToArray();
+
+                        foreach (string var in temp)
+                        {
+                            files.Add(var, DateTime.Now);
                         }
 
                         while (true)

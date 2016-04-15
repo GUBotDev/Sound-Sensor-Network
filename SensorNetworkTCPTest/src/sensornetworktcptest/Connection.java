@@ -17,8 +17,9 @@ import java.text.SimpleDateFormat;
  * @author Rollie
  */
 public class Connection {
-    private static String ipString = "10.1.25.248";
-    private static int nodeNum = 1, x = 0, y = 0;
+    private static String ipString = "192.168.1.19";
+    private static int nodeNum = 0;
+    private static double x = 42.127943, y = -80.0869;
     private static InetAddress ip;
     private static Socket commandR;
     private static Socket commandW;
@@ -50,7 +51,7 @@ public class Connection {
     
     public void commandWriteThread(){
         try {
-            Thread.sleep(1000);
+            ip = InetAddress.getByName(ipString);
             
             Runnable run;
             run = () -> {
@@ -60,7 +61,7 @@ public class Connection {
                         DataOutputStream audioWriter = new DataOutputStream(commandW.getOutputStream());   
 
                         while(!commandW.isConnected()){
-                            Thread.sleep(1000);
+                            Thread.sleep(2500);
                             
                             System.out.println("Not connected");
                         }
@@ -69,7 +70,8 @@ public class Connection {
                         {
                             System.out.println("Write Command Thread Started");
                             DateFormat dF = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss.SSSS");
-                            //commandSend.add("Event " + dF.format(new Date()));
+                            
+                            commandSend.add("Event " + dF.format(new Date((new Date()).getTime() + 2500)));
 
                             while (true)
                             {
@@ -90,7 +92,7 @@ public class Connection {
                         }
                         catch (Exception ex)
                         {
-                            //System.out.println(ex);
+                            System.out.println("1 " + ex);
                         }
 
                         commandW.close();
@@ -98,7 +100,7 @@ public class Connection {
                     }
                     catch (Exception ex)
                     {
-                        //System.out.println(ex);
+                        System.out.println("2 " + ex);
                     }
                 }
             };
@@ -151,7 +153,7 @@ public class Connection {
                                     Date date = dF.parse(split[1]);
                                     int seconds = Integer.parseInt(split[2]);
 
-                                    Audio.sendAudio(seconds);
+                                    Audio.sendAudio(date, seconds);
                                 }
                             }
                         }
@@ -177,7 +179,7 @@ public class Connection {
     
     public void audioThread(){
         try {
-            Thread.sleep(1000);
+            ip = InetAddress.getByName(ipString);
             
             Runnable run;
             run = () -> {
@@ -185,7 +187,9 @@ public class Connection {
                     try{
                         audio = new Socket(ip, 9999);
                         DataOutputStream audioWriter = new DataOutputStream(audio.getOutputStream());   
-
+                        
+                        Thread.sleep(2500);
+                        
                         try
                         {
                             System.out.println("Audio Thread Started");
@@ -193,13 +197,16 @@ public class Connection {
                             while (true)
                             {
                                 if (isWritingAudio){
-                                    audioWriter.writeBytes(audioInformation);
+                                    System.out.println("Sending Audio.");
+                                    audioWriter.writeBytes(audioInformation + "\n");
+                                    audioWriter.flush();
 
                                     audioWriter.write(audioSend, 0, audioSend.length);
-
-                                    isWritingAudio = false;
+                                    audioWriter.flush();
                                     
-                                    System.out.println("Sending Audio");
+                                    System.out.println("Audio sent.");
+                                    
+                                    isWritingAudio = false;
                                 }
                                 else{
                                     Thread.sleep(10);

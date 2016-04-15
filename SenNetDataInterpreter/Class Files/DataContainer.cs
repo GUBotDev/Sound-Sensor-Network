@@ -60,8 +60,8 @@ namespace SenNetDataInterpreter.Class_Files
         private DateTime date;
         private int iterator = 0;
         private int node = 0;
-        private int x = 0;
-        private int y = 0;
+        private double x = 0;
+        private double y = 0;
         private int senOne = 0;
         private int senTwo = 0;
         private int senThr = 0;
@@ -85,12 +85,12 @@ namespace SenNetDataInterpreter.Class_Files
             get { return this.node; }
             set { this.node = value; }
         }
-        public int X
+        public double X
         {
             get { return this.x; }
             set { this.x = value; }
         }
-        public int Y
+        public double Y
         {
             get { return this.y; }
             set { this.y = value; }

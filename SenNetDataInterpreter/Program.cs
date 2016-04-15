@@ -23,6 +23,9 @@ namespace SenNetDataInterpreter.Class_Files
             Thread readAudioThread = new Thread(() => PipeThread.audioReadNode());
             readAudioThread.Start();
 
+            Thread writeInterface = new Thread(() => PipeThread.write());
+            writeInterface.Start();
+
             Thread fileThread = new Thread(() => PipeThread.writeFile());
             fileThread.Start();
             
