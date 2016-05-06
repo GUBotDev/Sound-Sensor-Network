@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{AAE5A731-0B58-409B-B030-573774DC0ECD}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SensorNetworkInterface</RootNamespace>
     <AssemblyName>SensorNetworkInterface</AssemblyName>
@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="Class Files\Connection.cs" />
     <Compile Include="Class Files\Data.cs" />
+    <Compile Include="Class Files\Fourier.cs" />
     <Compile Include="Class Files\Visualize.cs" />
     <Compile Include="Interface.cs">
       <SubType>Form</SubType>

@@ -52,12 +52,20 @@ namespace SensorNetworkInterface.Class_Files
 
                         samplesPerPixel = samples / x;
 
-                        double tempYOff = 44100 / y;
+                        //double tempYOff = 44100 / y;
                         int initSamp = 0;
-                        int frequencyInterval = (44100 / 2) / y;
+                        //int frequencyInterval = (44100 / 2) / y;
+
+                        Console.WriteLine("start");
+
+                        double[][] fourier = Fourier.getPixels(sampleBuffer, x, y);
+
+
+                        Console.WriteLine("stop");
 
                         for (int xPos = 0; xPos < x; xPos++)
                         {
+                            /*
                             List<double> xSamples = new List<double>();
 
                             for (int i = initSamp; i < samplesPerPixel + initSamp; i++)
@@ -65,21 +73,13 @@ namespace SensorNetworkInterface.Class_Files
                                 xSamples.Add(Math.Round(ratioList.ElementAt(i) * 65536 - 32768));
                                 xSamples.Add(0);
                             }
-
-                            Program.mainForm.printConsole("Performing fft");
-
-                            double[] fft = xSamples.ToArray();
-                            
-                            //FFT(ref fft, true);
-                            int currentFreq = 0;
-
-                            Program.mainForm.printConsole("Displaying FFT");
+                            */
+                            //double[] fft = xSamples.ToArray();
 
                             //iterate through all pixels
                             for (int yPos = 0; yPos < y; yPos++)
                             {
-                                currentFreq += frequencyInterval;
-                                byte tempB = (byte)fft[currentFreq];//(byte)(xSamples.ElementAt(yPos) * y);
+                                byte tempB = (byte)fourier[xPos][yPos];//(byte)fft[currentFreq];//(byte)(xSamples.ElementAt(yPos) * y);
 
                                 bmp.SetPixel(xPos, yPos, getColor(tempB));//set pixel at y height
                             }
@@ -171,9 +171,6 @@ namespace SensorNetworkInterface.Class_Files
 
             WaveFileWriter.CreateWaveFile(file, waveStream);
         }
-
-
-        
     }
 
     /// <summary>

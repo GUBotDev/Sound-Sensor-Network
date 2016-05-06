@@ -17,7 +17,7 @@ import java.text.SimpleDateFormat;
  * @author Rollie
  */
 public class Connection {
-    private static String ipString = "192.168.1.19";
+    private static String ipString = "10.1.24.225";
     private static int nodeNum = 0;
     private static double x = 42.127943, y = -80.0869;
     private static InetAddress ip;
